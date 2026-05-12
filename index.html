@@ -1,378 +1,827 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Agentic Linguistics — Robert F. Gatzke</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Lora:wght@400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --ink: #09080d;
-    --ink-deep: #050408;
-    --cream: #f2ece0;
-    --cream-dim: #c8bfa8;
-    --gold: #c49a3c;
-    --border: rgba(196,154,60,0.15);
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --bg:#08090d;
+  --bg2:#0f1117;
+  --text:#f5f5f4;
+  --muted:#a6adbb;
+  --line:rgba(255,255,255,0.08);
+  --accent:#d3a85c;
+  --accent-soft:rgba(211,168,92,0.12);
+  --card:rgba(255,255,255,0.03);
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:
+    radial-gradient(circle at top left, rgba(211,168,92,0.08), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(100,120,255,0.07), transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:'Inter', sans-serif;
+  overflow-x:hidden;
+  cursor:auto;
+}
+
+/* ---------- background network ---------- */
+
+#bg-canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  opacity:0.35;
+}
+
+/* ---------- nav ---------- */
+
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:1000;
+  backdrop-filter:blur(14px);
+  background:rgba(8,9,13,0.7);
+  border-bottom:1px solid var(--line);
+}
+
+.nav-inner{
+  max-width:1400px;
+  margin:auto;
+  padding:20px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  text-decoration:none;
+  color:white;
+  font-size:0.95rem;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  font-weight:600;
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.nav-links{
+  display:flex;
+  gap:34px;
+  align-items:center;
+}
+
+.nav-links a{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:0.92rem;
+  transition:0.25s ease;
+}
+
+.nav-links a:hover{
+  color:white;
+}
+
+/* ---------- hero ---------- */
+
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  position:relative;
+  z-index:2;
+  padding:140px 28px 80px;
+}
+
+.hero-inner{
+  max-width:1400px;
+  width:100%;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1.1fr 0.9fr;
+  gap:70px;
+  align-items:center;
+}
+
+.eyebrow{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:0.28em;
+  font-size:0.72rem;
+  margin-bottom:24px;
+}
+
+.hero h1{
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(3.7rem,8vw,7.5rem);
+  line-height:0.92;
+  font-weight:500;
+  margin-bottom:30px;
+  letter-spacing:-0.04em;
+}
+
+.hero h1 em{
+  font-style:italic;
+  color:var(--accent);
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:1.08rem;
+  line-height:1.95;
+  max-width:720px;
+}
+
+.hero-buttons{
+  display:flex;
+  gap:16px;
+  margin-top:38px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:15px 26px;
+  border-radius:999px;
+  text-decoration:none;
+  transition:0.3s ease;
+  font-size:0.92rem;
+}
+
+.btn-primary{
+  background:var(--accent);
+  color:#08090d;
+  font-weight:600;
+}
+
+.btn-secondary{
+  border:1px solid var(--line);
+  color:white;
+  background:rgba(255,255,255,0.03);
+}
+
+.btn:hover{
+  transform:translateY(-3px);
+}
+
+/* ---------- card ---------- */
+
+.glass-card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:28px;
+  padding:38px;
+  backdrop-filter:blur(18px);
+}
+
+.glass-card small{
+  color:var(--accent);
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  font-size:0.72rem;
+}
+
+.glass-card h3{
+  margin-top:18px;
+  font-size:2rem;
+  line-height:1.15;
+  margin-bottom:18px;
+}
+
+.glass-card p{
+  font-size:0.98rem;
+  line-height:1.9;
+}
+
+/* ---------- sections ---------- */
+
+section{
+  position:relative;
+  z-index:2;
+}
+
+.section{
+  padding:120px 28px;
+}
+
+.section-inner{
+  max-width:1400px;
+  margin:auto;
+}
+
+.section-label{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:0.24em;
+  font-size:0.72rem;
+  margin-bottom:20px;
+}
+
+.section-title{
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(2.8rem,5vw,5rem);
+  line-height:1;
+  margin-bottom:30px;
+  max-width:900px;
+}
+
+.section-text{
+  color:var(--muted);
+  line-height:2;
+  font-size:1.05rem;
+  max-width:980px;
+}
+
+/* ---------- features ---------- */
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  margin-top:60px;
+}
+
+.feature{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:32px;
+  transition:0.3s ease;
+}
+
+.feature:hover{
+  transform:translateY(-6px);
+  border-color:rgba(211,168,92,0.3);
+}
+
+.feature h4{
+  margin-bottom:16px;
+  font-size:1.3rem;
+}
+
+.feature p{
+  color:var(--muted);
+  line-height:1.85;
+}
+
+/* ---------- research ---------- */
+
+.paper-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:28px;
+  margin-top:60px;
+}
+
+.paper{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:38px;
+}
+
+.paper-top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:24px;
+  color:var(--muted);
+  font-size:0.9rem;
+}
+
+.paper h3{
+  font-size:2rem;
+  line-height:1.15;
+  margin-bottom:20px;
+}
+
+.paper p{
+  color:var(--muted);
+  line-height:1.9;
+}
+
+/* ---------- founder ---------- */
+
+.founder{
+  display:grid;
+  grid-template-columns:0.85fr 1.15fr;
+  gap:60px;
+  align-items:center;
+  margin-top:70px;
+}
+
+.author-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:28px;
+  overflow:hidden;
+}
+
+.author-image{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  display:block;
+}
+
+.author-content{
+  padding:28px;
+}
+
+.author-content h3{
+  font-size:2rem;
+  margin-bottom:8px;
+}
+
+.author-role{
+  color:var(--accent);
+  text-transform:uppercase;
+  letter-spacing:0.18em;
+  font-size:0.72rem;
+  margin-bottom:20px;
+}
+
+.author-content p{
+  color:var(--muted);
+  line-height:1.9;
+}
+
+/* ---------- manifesto ---------- */
+
+.manifesto{
+  text-align:center;
+  padding:120px 28px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,0.02);
+}
+
+.manifesto p{
+  font-family:'Cormorant Garamond', serif;
+  font-size:clamp(1.8rem,3vw,3rem);
+  line-height:1.5;
+  max-width:1000px;
+  margin:auto;
+}
+
+.manifesto em{
+  color:var(--accent);
+  font-style:italic;
+}
+
+/* ---------- footer ---------- */
+
+footer{
+  padding:50px 28px;
+  position:relative;
+  z-index:2;
+}
+
+.footer-inner{
+  max-width:1400px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.footer-inner p{
+  color:var(--muted);
+  line-height:1.7;
+}
+
+/* ---------- responsive ---------- */
+
+@media(max-width:1100px){
+
+  .hero-inner,
+  .paper-grid,
+  .founder{
+    grid-template-columns:1fr;
   }
 
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--ink-deep);
-    color: var(--cream);
-    font-family: 'Lora', serif;
-    font-size: 16px;
-    line-height: 1.6;
-    overflow-x: hidden;
+  .features{
+    grid-template-columns:1fr;
   }
 
-  /* Canvas background */
-  #bg-canvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    opacity: 0.25;
-    pointer-events: none;
+}
+
+@media(max-width:760px){
+
+  .nav-links{
+    display:none;
   }
 
-  .wrap { position: relative; z-index: 2; width: 100%; }
-
-  /* ─────── NAV ─────── */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    background: rgba(5,4,8,0.85);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
+  .hero{
+    padding-top:130px;
   }
 
-  .nav-logo {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    text-transform: uppercase;
-    text-decoration: none;
+  .hero h1{
+    font-size:4rem;
   }
 
-  .nav-links { display: none; } /* Hidden on mobile */
-
-  @media (min-width: 1024px) {
-    nav { padding: 1.2rem 4rem; }
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
-    }
-    .nav-links a {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--cream-dim);
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: color 0.3s;
-    }
-    .nav-links a:hover { color: var(--gold); }
+  .section{
+    padding:90px 22px;
   }
 
-  /* ─────── HERO ─────── */
-  .hero {
-    min-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
+  .glass-card,
+  .paper,
+  .feature{
+    padding:28px;
   }
 
-  .hero-overline {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-    letter-spacing: 0.2em;
+  .section-title{
+    font-size:3rem;
   }
 
-  .hero-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.8rem, 10vw, 6.5rem);
-    font-weight: 300;
-    line-height: 1;
-    margin-bottom: 1.5rem;
-  }
+}
 
-  .hero-title em { font-style: italic; color: var(--gold); }
-
-  .hero-sub {
-    max-width: 45ch;
-    font-size: 1.1rem;
-    color: var(--cream-dim);
-    margin-bottom: 2.5rem;
-  }
-
-  @media (min-width: 1024px) {
-    .hero { padding: 0 4rem; min-height: 100vh; }
-  }
-
-  /* ─────── SECTIONS ─────── */
-  section { padding: 5rem 1.5rem; border-bottom: 1px solid var(--border); }
-  
-  @media (min-width: 1024px) {
-    section { padding: 8rem 4rem; }
-  }
-
-  .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    display: block;
-  }
-
-  /* ─────── INTRO ─────── */
-  .intro-grid {
-    display: grid;
-    gap: 3rem;
-  }
-
-  .intro-quote {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.2rem;
-    line-height: 1.2;
-    border-left: 1px solid var(--gold);
-    padding-left: 1.5rem;
-  }
-
-  .intro-text p { margin-bottom: 1.2rem; color: var(--cream-dim); }
-
-  @media (min-width: 1024px) {
-    .intro-grid { grid-template-columns: 1fr 1fr; gap: 6rem; }
-  }
-
-  /* ─────── RESEARCH ─────── */
-  .paper-card {
-    background: rgba(196,154,60,0.05);
-    border: 1px solid var(--border);
-    padding: 2rem;
-    margin-top: 2rem;
-  }
-
-  .paper-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin-bottom: 1rem; }
-  
-  /* ─────── USE CASES ─────── */
-  .use-cases {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .use-case-item {
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    background: rgba(255,255,255,0.02);
-  }
-
-  .use-case-item h4 { font-family: 'JetBrains Mono', monospace; color: var(--gold); font-size: 0.8rem; margin-bottom: 0.5rem; }
-
-  /* ─────── FOUNDER ─────── */
-  .founder-grid {
-    display: grid;
-    gap: 3rem;
-    align-items: center;
-  }
-
-  .founder-img-wrap {
-    width: 100%;
-    max-width: 400px;
-    aspect-ratio: 4/5;
-    background: var(--ink);
-    border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .founder-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: grayscale(1);
-    transition: filter 0.5s;
-  }
-
-  .founder-img:hover { filter: grayscale(0); }
-
-  @media (min-width: 1024px) {
-    .founder-grid { grid-template-columns: 1.2fr 1fr; gap: 5rem; }
-  }
-
-  /* ─────── FOOTER ─────── */
-  footer {
-    padding: 3rem 1.5rem;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--cream-dim);
-    opacity: 0.6;
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s ease-out;
-  }
-
-  .reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 
 <body>
-  <canvas id="bg-canvas"></canvas>
 
-  <div class="wrap">
-    <nav>
-      <a href="#" class="nav-logo">Agentic Linguistics</a>
-      <ul class="nav-links">
-        <li><a href="#science">Science</a></li>
-        <li><a href="#research">Research</a></li>
-        <li><a href="#founder">Founder</a></li>
-      </ul>
-    </nav>
+<canvas id="bg-canvas"></canvas>
 
-    <section class="hero">
-      <span class="hero-overline">A New interdisciplinary framework</span>
-      <h1 class="hero-title">Giving Voices to <em>Autonomous</em> Reasoning</h1>
-      <p class="hero-sub">Founded by Robert F. Gatzke, exploring the intersection of agentic AI and endangered linguistic heritage.</p>
-    </section>
+<!-- NAV -->
 
-    <section id="science">
-      <div class="intro-grid">
-        <div class="reveal">
-          <span class="section-label">Foundations</span>
-          <div class="intro-quote">"Shifting from statistical mimicry to <em>active reasoning</em>."</div>
-        </div>
-        <div class="intro-text reveal">
-          <p>Agentic Linguistics reimagines the relationship between large language models and low-resource or endangered languages.</p>
-          <p>By moving away from data-intensive training, we utilize <strong>Sense–Think–Act</strong> loops. This allows agents to consult structural grammar blueprints and lexicons in real-time, making even the most underdocumented languages fully executable in the digital age.</p>
-        </div>
+<nav>
+  <div class="nav-inner">
+
+    <a href="#" class="logo">
+      Agentic<span>Linguistics</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#science">Science</a>
+      <a href="#research">Research</a>
+      <a href="#framework">Framework</a>
+      <a href="#founder">Founder</a>
+    </div>
+
+  </div>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="hero-inner">
+
+    <div>
+
+      <div class="eyebrow">
+        Emerging Interdisciplinary Framework
       </div>
 
-      <div class="use-cases reveal">
-        <div class="use-case-item">
-          <h4>Healthcare</h4>
-          <p>Deploying localized diagnostic interfaces in native tongues instantly.</p>
-        </div>
-        <div class="use-case-item">
-          <h4>Education</h4>
-          <p>Interactive tutors that adapt to community-specific linguistic nuances.</p>
-        </div>
-        <div class="use-case-item">
-          <h4>Archival</h4>
-          <p>Digital agents that help preserve and dynamically navigate oral histories.</p>
-        </div>
-        <div class="use-case-item">
-          <h4>Limitless Potential</h4>
-          <p>The potential use cases for agentic systems in language are truly limitless, ranging from real-time translation to cultural revitalisation.</p>
-        </div>
-      </div>
-    </section>
+      <h1>
+        The Future of <em>Language Intelligence</em>
+      </h1>
 
-    <section id="research">
-      <span class="section-label">Publications</span>
-      <div class="reveal">
-        <p style="font-size: 1.2rem;">The inaugural research paper is currently in development.</p>
-        <div class="paper-card">
-          <span style="font-family:'JetBrains Mono'; font-size:0.6rem; color:var(--gold);">COMING JUNE 2026</span>
-          <h2 class="paper-title">Toward an Agentic Paradigm for Low-Resource Language Revitalization</h2>
-          <p style="color:var(--cream-dim); font-size:0.9rem;">This paper introduces the Sense–Think–Act framework and demonstrates how rule-based reasoning supersedes statistical dependency in low-resource contexts.</p>
-        </div>
-      </div>
-    </section>
+      <p>
+        Agentic Linguistics is a new interdisciplinary framework exploring how autonomous reasoning agents can interact with low-resource and endangered languages without requiring massive training corpora. Founded by Robert F Gatzke, the field proposes a shift from passive prediction toward dynamic linguistic reasoning.
+      </p>
 
-    <section id="founder">
-      <div class="founder-grid">
-        <div class="reveal">
-          <span class="section-label">The Founder</span>
-          <h2 style="font-family: 'Cormorant Garamond'; font-size: 3rem; margin-bottom: 1rem;">Robert F. Gatzke</h2>
-          <p style="margin-bottom: 1.5rem; color:var(--cream-dim);">A linguist and researcher dedicated to ensuring no language is left behind by the digital revolution. Robert’s work at Agentic Linguistics focuses on bypassing the need for massive datasets through autonomous reasoning systems.</p>
-          <div style="font-family:'JetBrains Mono'; font-size:0.7rem; color:var(--gold);">Linguistics · AI Ethics · Computational Reasoning</div>
-        </div>
-        <div class="founder-img-wrap reveal">
-          <img src="25.jpg" alt="Robert F. Gatzke" class="founder-img">
-        </div>
-      </div>
-    </section>
+      <div style="height:20px;"></div>
 
-    <footer>
-      AGENTICLINGUISTICS.COM &copy; 2026 <br> RESEARCH BY ROBERT F. GATZKE
-    </footer>
+      <p>
+        By combining structured grammar systems, digitized lexicons, and autonomous tool-calling agents, Agentic Linguistics introduces a radically different path for language technology — one where even historically excluded languages can become executable in modern computational systems.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#research" class="btn btn-primary">View Research</a>
+        <a href="#framework" class="btn btn-secondary">Explore Framework</a>
+      </div>
+
+    </div>
+
+    <div class="glass-card">
+
+      <small>
+        Foundational Paper — June 2026
+      </small>
+
+      <h3>
+        The First Publication of Agentic Linguistics
+      </h3>
+
+      <p>
+        The inaugural research paper introducing Agentic Linguistics is currently being written and will establish the theoretical architecture behind Sense–Think–Act linguistic systems, rule-based reasoning agents, and minimal-dataset language execution.
+      </p>
+
+      <div style="height:24px;"></div>
+
+      <p>
+        The framework has potentially limitless use cases involving language and agentic systems — including translation, education, cultural preservation, healthcare communication, archival technologies, and autonomous interfaces for underrepresented speech communities around the world.
+      </p>
+
+    </div>
+
   </div>
 
-  <script>
-    // Canvas animation
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, nodes = [];
+</section>
 
-    function resize() {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
+<!-- SCIENCE -->
 
-    for (let i = 0; i < 40; i++) {
-      nodes.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3
-      });
-    }
+<section class="section" id="science">
 
-    function draw() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.strokeStyle = 'rgba(196,154,60,0.1)';
-      ctx.beginPath();
-      for (let i = 0; i < nodes.length; i++) {
-        let n = nodes[i];
-        n.x += n.vx; n.y += n.vy;
-        if (n.x < 0 || n.x > W) n.vx *= -1;
-        if (n.y < 0 || n.y > H) n.vy *= -1;
-        
-        ctx.moveTo(n.x, n.y);
-        nodes.forEach(m => {
-          let d = Math.hypot(n.x - m.x, n.y - m.y);
-          if (d < 150) ctx.lineTo(m.x, m.y);
-        });
+  <div class="section-inner">
+
+    <div class="section-label">
+      The Science
+    </div>
+
+    <h2 class="section-title">
+      Beyond data-intensive NLP.
+    </h2>
+
+    <p class="section-text">
+      Traditional Natural Language Processing relies on massive datasets and statistical mimicry. Agentic Linguistics instead focuses on active reasoning through structured grammar systems, explicit instructions, lexical retrieval, and autonomous decision-making. Rather than memorizing a language during training, the agent dynamically reasons through it in real time using a Sense–Think–Act methodology.
+    </p>
+
+    <div class="features">
+
+      <div class="feature">
+        <h4>Sense → Think → Act</h4>
+        <p>
+          Agents perceive linguistic context, reason through structural grammar systems, and execute meaningful tasks through autonomous decision making.
+        </p>
+      </div>
+
+      <div class="feature">
+        <h4>Minimal Viable Datasets</h4>
+        <p>
+          Functional language interaction becomes possible without requiring millions of documents or internet-scale corpora.
+        </p>
+      </div>
+
+      <div class="feature">
+        <h4>Language Revitalization</h4>
+        <p>
+          Endangered and low-resource languages can gain translation systems, educational tools, archives, and computational accessibility.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- RESEARCH -->
+
+<section class="section" id="research">
+
+  <div class="section-inner">
+
+    <div class="section-label">
+      Research
+    </div>
+
+    <h2 class="section-title">
+      Publications & Ongoing Work
+    </h2>
+
+    <div class="paper-grid">
+
+      <div class="paper">
+
+        <div class="paper-top">
+          <span>Foundational Paper</span>
+          <span>June 2026</span>
+        </div>
+
+        <h3>
+          Toward an Agentic Paradigm for Low-Resource Languages
+        </h3>
+
+        <p>
+          The first publication introduces the theoretical foundations of Agentic Linguistics and explores how autonomous reasoning systems may achieve functional linguistic capability without massive training corpora.
+        </p>
+
+      </div>
+
+      <div class="paper">
+
+        <div class="paper-top">
+          <span>Research Direction</span>
+          <span>In Progress</span>
+        </div>
+
+        <h3>
+          Executable Language Systems
+        </h3>
+
+        <p>
+          Current work explores real-time translation systems, interactive tutors, digital archivists, and culturally aligned interfaces powered by agentic reasoning frameworks.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FRAMEWORK -->
+
+<section class="section" id="framework">
+
+  <div class="section-inner">
+
+    <div class="section-label">
+      Framework
+    </div>
+
+    <h2 class="section-title">
+      A new computational model for language interaction.
+    </h2>
+
+    <p class="section-text">
+      Agentic Linguistics reframes language understanding as an executable reasoning process rather than a memorization problem. Autonomous systems equipped with grammar blueprints, lexical databases, and structured tool access can dynamically navigate linguistic tasks in real time. This allows localized and underrepresented languages to participate in the modern digital ecosystem far earlier than traditional NLP methods would allow.
+    </p>
+
+  </div>
+
+</section>
+
+<!-- MANIFESTO -->
+
+<section class="manifesto">
+
+  <p>
+    “No language should be too small to survive the digital age. Every language deserves a computational future — and <em>Agentic Linguistics</em> is one path toward building it.”
+  </p>
+
+</section>
+
+<!-- FOUNDER -->
+
+<section class="section" id="founder">
+
+  <div class="section-inner">
+
+    <div class="section-label">
+      Founder
+    </div>
+
+    <div class="founder">
+
+      <div class="author-card">
+
+        <!-- ADD YOUR IMAGE TO SAME DIRECTORY -->
+        <img src="25.jpg" alt="Robert F Gatzke" class="author-image">
+
+      </div>
+
+      <div>
+
+        <h2 class="section-title" style="margin-bottom:14px;">
+          Robert F Gatzke
+        </h2>
+
+        <div class="author-role">
+          Founder — Agentic Linguistics
+        </div>
+
+        <p class="section-text" style="max-width:760px;">
+          Robert F Gatzke is the founder of Agentic Linguistics, an emerging framework positioned at the intersection of artificial intelligence, computational linguistics, autonomous systems, and language revitalization research.
+        </p>
+
+        <div style="height:22px;"></div>
+
+        <p class="section-text" style="max-width:760px;">
+          His work challenges the assumption that large-scale memorization is the only path toward computational language intelligence. By focusing on reasoning-driven architectures and executable linguistic systems, Agentic Linguistics proposes a fundamentally different direction for AI interaction with human language.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+  <div class="footer-inner">
+
+    <p>
+      © 2026 AgenticLinguistics.com
+    </p>
+
+    <p>
+      Founded by Robert F Gatzke
+    </p>
+
+  </div>
+
+</footer>
+
+<script>
+
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+let w,h;
+let particles = [];
+
+function resize(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+
+window.addEventListener('resize', resize);
+resize();
+
+for(let i=0;i<55;i++){
+  particles.push({
+    x:Math.random()*w,
+    y:Math.random()*h,
+    vx:(Math.random()-0.5)*0.25,
+    vy:(Math.random()-0.5)*0.25,
+    r:Math.random()*2+1
+  });
+}
+
+function animate(){
+
+  ctx.clearRect(0,0,w,h);
+
+  for(let i=0;i<particles.length;i++){
+
+    let p = particles[i];
+
+    for(let j=i+1;j<particles.length;j++){
+
+      let p2 = particles[j];
+
+      let dx = p.x-p2.x;
+      let dy = p.y-p2.y;
+
+      let dist = Math.sqrt(dx*dx+dy*dy);
+
+      if(dist < 170){
+
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(p2.x,p2.y);
+
+        ctx.strokeStyle = `rgba(211,168,92,${0.12-(dist/1700)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+
       }
-      ctx.stroke();
-      requestAnimationFrame(draw);
+
     }
-    draw();
 
-    // Intersection Observer
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, { threshold: 0.1 });
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = 'rgba(211,168,92,0.45)';
+    ctx.fill();
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-  </script>
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if(p.x < 0 || p.x > w) p.vx *= -1;
+    if(p.y < 0 || p.y > h) p.vy *= -1;
+
+  }
+
+  requestAnimationFrame(animate);
+
+}
+
+animate();
+
+</script>
+
 </body>
 </html>
