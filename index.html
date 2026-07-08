@@ -1,824 +1,1395 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Agentic Linguistics — Robert F. Gatzke</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Linguistics — a new science of language, with the experiments to prove it</title>
+<meta name="description" content="Agentic linguistics studies language through, with, and on autonomous agents. Its founding experiment suite runs deterministically inside this page — reproduce it yourself.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
 :root{
-  --bg:#08090d;
-  --bg2:#0f1117;
-  --text:#f5f5f4;
-  --muted:#a6adbb;
-  --line:rgba(255,255,255,0.08);
-  --accent:#d3a85c;
-  --accent-soft:rgba(211,168,92,0.12);
-  --card:rgba(255,255,255,0.03);
+  --paper:#F4F6F3;         /* cool lab white */
+  --card:#FBFCFA;
+  --ink:#10161A;           /* blue-black */
+  --ink-2:#33404A;
+  --muted:#5C6A75;
+  --grid:#E1E7E2;
+  --grid-2:#D2DAD4;
+  --red:#C93A2B;           /* formant red */
+  --red-soft:#A83224;
+  --blue:#2B5CAD;          /* pitch blue */
+  --green:#33795B;         /* intensity green */
+  --amber:#B5841C;
+  --dark:#101820;          /* instrument housing */
+  --dark-2:#16202A;
+  --dark-grid:#243240;
+  --lite-on-dark:#E9EEEA;
+  --mut-on-dark:#93A2AC;
+  --red-d:#E8604F;         /* series colors on dark */
+  --blue-d:#6C97E0;
+  --green-d:#4FAE87;
+  --gray-d:#8A97A0;
+  --serif:"Spectral",Georgia,serif;
+  --sans:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --maxw:1140px;
+  --r:12px;
 }
-
-html{
-  scroll-behavior:smooth;
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
-
-body{
-  background:
-    radial-gradient(circle at top left, rgba(211,168,92,0.08), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(100,120,255,0.07), transparent 30%),
-    var(--bg);
-  color:var(--text);
-  font-family:'Inter', sans-serif;
-  overflow-x:hidden;
-  cursor:auto;
-}
-
-/* ---------- background network ---------- */
-
-#bg-canvas{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  opacity:0.35;
-}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--red);color:#fff}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+section{scroll-margin-top:84px}
 
 /* ---------- nav ---------- */
+.nav{position:sticky;top:0;z-index:60;background:rgba(244,246,243,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--grid)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:62px}
+.mark{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:600;font-size:17.5px;letter-spacing:-.01em}
+.mark svg{width:30px;height:22px;flex:none}
+.nav-links{display:flex;gap:24px;font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.nav-links a{padding:5px 1px;border-bottom:2px solid transparent;transition:.18s}
+.nav-links a:hover{color:var(--ink);border-color:var(--red)}
+.nav-cta{font-family:var(--mono);font-size:12px;letter-spacing:.06em;background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:7px;transition:.18s}
+.nav-cta:hover{background:var(--red-soft)}
+@media(max-width:920px){.nav-links{display:none}}
 
-nav{
-  position:fixed;
-  top:0;
-  width:100%;
-  z-index:1000;
-  backdrop-filter:blur(14px);
-  background:rgba(8,9,13,0.7);
-  border-bottom:1px solid var(--line);
-}
-
-.nav-inner{
-  max-width:1400px;
-  margin:auto;
-  padding:20px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.logo{
-  text-decoration:none;
-  color:white;
-  font-size:0.95rem;
-  letter-spacing:0.22em;
-  text-transform:uppercase;
-  font-weight:600;
-}
-
-.logo span{
-  color:var(--accent);
-}
-
-.nav-links{
-  display:flex;
-  gap:34px;
-  align-items:center;
-}
-
-.nav-links a{
-  color:var(--muted);
-  text-decoration:none;
-  font-size:0.92rem;
-  transition:0.25s ease;
-}
-
-.nav-links a:hover{
-  color:white;
-}
+/* ---------- shared ---------- */
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow::before{content:"";width:16px;height:2px;background:var(--red);flex:none}
+.h-display{font-family:var(--serif);font-weight:600;letter-spacing:-.02em;font-size:clamp(38px,5.2vw,60px);line-height:1.07}
+.h-sec{font-family:var(--serif);font-weight:600;letter-spacing:-.016em;font-size:clamp(28px,3.4vw,40px);line-height:1.14}
+.lede{font-family:var(--serif);font-size:19px;line-height:1.65;color:var(--ink-2)}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:14px;font-weight:600;padding:12px 22px;border-radius:8px;border:1px solid var(--ink);cursor:pointer;transition:.18s}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.primary:hover{background:var(--red-soft);border-color:var(--red-soft);transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--card);transform:translateY(-1px)}
+.btn.run{background:var(--red);border-color:var(--red);color:#fff;font-family:var(--mono);font-size:12.5px;letter-spacing:.05em}
+.btn.run:hover{background:var(--red-soft);border-color:var(--red-soft)}
+.btn[disabled]{opacity:.55;cursor:wait;transform:none}
+.mono{font-family:var(--mono)}
+.chip{font-family:var(--mono);font-size:11px;letter-spacing:.05em;border:1px solid var(--grid-2);background:var(--card);color:var(--ink-2);padding:6px 12px;border-radius:999px}
 
 /* ---------- hero ---------- */
+.hero{padding:78px 0 90px;border-bottom:1px solid var(--grid);position:relative}
+.hero::before{ /* faint graph paper, field-notebook texture */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 30%,transparent 95%);
+  mask-image:linear-gradient(180deg,transparent,#000 30%,transparent 95%);
+}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;position:relative}
+.hero h1{margin:22px 0 22px}
+.hero h1 em{font-style:italic;color:var(--red)}
+.hero .lede{max-width:50ch;margin-bottom:32px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:38px}
+.hero-facts{display:flex;gap:26px;flex-wrap:wrap}
+.fact{border-left:2px solid var(--grid-2);padding-left:14px}
+.fact b{display:block;font-family:var(--mono);font-size:18px;font-weight:500;letter-spacing:-.01em}
+.fact span{font-size:12px;color:var(--muted)}
+@media(max-width:960px){.hero-grid{grid-template-columns:1fr;gap:44px}}
 
-.hero{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  position:relative;
-  z-index:2;
-  padding:140px 28px 80px;
+/* ---------- console (signature) ---------- */
+.console{background:var(--dark);border-radius:var(--r);border:1px solid #1C2833;box-shadow:0 20px 60px -28px rgba(16,22,26,.5);overflow:hidden}
+.con-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--dark-grid);font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--mut-on-dark)}
+.con-head .live{display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green-d);position:relative;flex:none}
+.dot::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1.5px solid var(--green-d);opacity:0;animation:ping 2.2s ease-out infinite}
+@keyframes ping{0%{transform:scale(.5);opacity:.8}70%{transform:scale(1.1);opacity:0}100%{opacity:0}}
+.con-body{padding:18px 14px 8px}
+.con-body svg{width:100%;height:auto;display:block}
+.con-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px 16px;font-family:var(--mono);font-size:11px;color:var(--mut-on-dark);letter-spacing:.04em;flex-wrap:wrap}
+#conStatus b{color:var(--green-d);font-weight:500}
+#conStatus .bad{color:var(--red-d)}
+.con-run{background:var(--red-d);color:var(--dark);border:none;font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.06em;padding:9px 16px;border-radius:7px;cursor:pointer;transition:.18s}
+.con-run:hover{filter:brightness(1.08)}
+.con-run[disabled]{opacity:.5;cursor:wait}
+
+/* ---------- findings ---------- */
+.findings{background:var(--card);border-bottom:1px solid var(--grid)}
+.find-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-left:1px solid var(--grid);border-right:1px solid var(--grid)}
+.find{padding:38px 30px;border-right:1px solid var(--grid)}
+.find:last-child{border-right:none}
+.find .fk{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--red);display:block;margin-bottom:14px}
+.find .num{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-.02em;display:block;margin-bottom:10px}
+.find .num i{font-style:italic;font-weight:500}
+.find p{font-size:13.5px;color:var(--muted);line-height:1.6}
+@media(max-width:920px){.find-grid{grid-template-columns:1fr}.find{border-right:none;border-bottom:1px solid var(--grid)}.find:last-child{border-bottom:none}}
+
+/* ---------- exp001 (dark) ---------- */
+.exp{background:var(--dark);color:var(--lite-on-dark);padding:104px 0 96px}
+.exp .eyebrow{color:var(--mut-on-dark)}
+.exp .eyebrow::before{background:var(--red-d)}
+.exp-intro{max-width:760px;margin-bottom:26px}
+.exp-intro .h-sec{margin:18px 0 20px}
+.exp-intro p{color:var(--mut-on-dark);font-size:16.5px;max-width:66ch}
+.proto{display:flex;gap:10px;flex-wrap:wrap;margin:26px 0 66px}
+.proto .chip{background:var(--dark-2);border-color:var(--dark-grid);color:var(--mut-on-dark)}
+.proto .chip b{color:var(--lite-on-dark);font-weight:500}
+.study{display:grid;grid-template-columns:.92fr 1.08fr;gap:54px;align-items:start;padding:56px 0;border-top:1px solid var(--dark-grid)}
+.study .sk{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;color:var(--red-d);display:block;margin-bottom:14px}
+.study h3{font-family:var(--serif);font-size:27px;font-weight:600;letter-spacing:-.015em;line-height:1.2;margin-bottom:16px}
+.study .body p{font-size:15px;color:var(--mut-on-dark);line-height:1.7;margin-bottom:16px}
+.study .body p b{color:var(--lite-on-dark);font-weight:500}
+.result-line{border-left:3px solid var(--red-d);padding:4px 0 4px 16px;margin:22px 0;font-family:var(--serif);font-size:17.5px;line-height:1.55;color:var(--lite-on-dark)}
+.result-line i{font-style:italic}
+details.methods{margin-top:20px;border:1px solid var(--dark-grid);border-radius:9px;background:var(--dark-2)}
+details.methods summary{cursor:pointer;list-style:none;padding:13px 16px;font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--mut-on-dark);display:flex;justify-content:space-between;align-items:center}
+details.methods summary::-webkit-details-marker{display:none}
+details.methods summary::after{content:"+";font-size:15px;color:var(--red-d)}
+details.methods[open] summary::after{content:"–"}
+details.methods .mth{padding:2px 16px 16px;font-size:13px;color:var(--mut-on-dark);line-height:1.7}
+details.methods .mth code{font-family:var(--mono);font-size:12px;color:var(--lite-on-dark)}
+.charts{display:grid;gap:18px}
+.chart-card{background:var(--dark-2);border:1px solid var(--dark-grid);border-radius:10px;padding:16px 14px 10px;position:relative}
+.chart-card .ct{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:0 6px 10px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--mut-on-dark)}
+.chart-card .verify{font-size:10px;color:var(--green-d);opacity:0;transition:opacity .4s}
+.chart-card.verified .verify{opacity:1}
+.chart-card svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 6px 6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--mut-on-dark)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+@media(max-width:960px){.study{grid-template-columns:1fr;gap:34px}}
+
+/* outcome table */
+.outcome{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px}
+.outcome th,.outcome td{border:1px solid var(--dark-grid);padding:10px 12px;text-align:left;vertical-align:top}
+.outcome th{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--mut-on-dark);font-weight:500;background:var(--dark-2)}
+.outcome td{color:var(--mut-on-dark);line-height:1.5}
+.outcome td b{color:var(--lite-on-dark);font-weight:500;font-family:var(--mono);font-size:12px}
+.outcome tr.win td{background:rgba(232,96,79,.07)}
+.outcome tr.win td b{color:var(--red-d)}
+
+/* lexicon grid */
+.lexicon{margin-top:22px;background:var(--dark-2);border:1px solid var(--dark-grid);border-radius:10px;padding:18px 18px 14px}
+.lexicon .lt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--mut-on-dark);margin-bottom:14px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.lexicon .lt b{color:var(--green-d);font-weight:500}
+.lex-table{width:100%;border-collapse:collapse}
+.lex-table th,.lex-table td{padding:9px 6px;text-align:center;border-bottom:1px dashed var(--dark-grid)}
+.lex-table tr:last-child td{border-bottom:none}
+.lex-table th{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;font-weight:500;color:var(--mut-on-dark)}
+.lex-table .rowh{text-align:left;color:var(--mut-on-dark);font-family:var(--mono);font-size:11px;white-space:nowrap}
+.lex-table td .w{font-family:var(--mono);font-size:14.5px;color:var(--lite-on-dark)}
+.lex-table td .pre{border-bottom:2px solid var(--gray-d);padding-bottom:1px}
+.lex-table td .suf{padding-bottom:1px}
+.c-red .suf{border-bottom:2px solid var(--red-d)}
+.c-blue .suf{border-bottom:2px solid var(--blue-d)}
+.c-green .suf{border-bottom:2px solid var(--green-d)}
+.c-yellow .suf{border-bottom:2px solid #D9B04A}
+.lex-cap{margin-top:12px;font-size:12.5px;color:var(--mut-on-dark);line-height:1.6}
+
+/* repro box */
+.repro{margin-top:70px;border:1px solid var(--dark-grid);border-radius:var(--r);background:var(--dark-2);padding:34px 34px 30px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px}
+.repro h3{font-family:var(--serif);font-size:24px;font-weight:600;margin:12px 0 14px;color:var(--lite-on-dark)}
+.repro p{font-size:14.5px;color:var(--mut-on-dark);line-height:1.7;margin-bottom:14px}
+.repro p code{font-family:var(--mono);font-size:12.5px;color:var(--lite-on-dark)}
+.repro .not{border:1px dashed var(--dark-grid);border-radius:9px;padding:20px 20px}
+.repro .not .nk{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--amber);display:block;margin-bottom:12px}
+.repro .not ul{list-style:none}
+.repro .not li{font-size:13px;color:var(--mut-on-dark);line-height:1.6;padding:6px 0 6px 16px;position:relative}
+.repro .not li::before{content:"—";position:absolute;left:0;color:var(--amber)}
+@media(max-width:960px){.repro{grid-template-columns:1fr}}
+
+/* ---------- live probe ---------- */
+.probe{padding:104px 0;border-bottom:1px solid var(--grid)}
+.probe-head{max-width:760px}
+.probe-head .h-sec{margin:18px 0 18px}
+.probe-head p{color:var(--muted);font-size:16px;line-height:1.7;max-width:66ch;margin-bottom:14px}
+.probe-head p b{color:var(--ink);font-weight:600}
+.probe-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:44px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--grid-2);border-radius:var(--r);overflow:hidden}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid var(--grid);font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--muted)}
+.panel-b{padding:18px}
+.panel-b svg{width:100%;height:auto;display:block}
+#probeCtl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;border-top:1px solid var(--grid)}
+#probeStatus{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+#probeStatus b{color:var(--green);font-weight:500}
+#probeStatus .bad{color:var(--red)}
+.transcript{max-height:420px;overflow-y:auto}
+.tr-item{padding:13px 18px;border-bottom:1px dashed var(--grid)}
+.tr-item .tm{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px}
+.tr-item .tw{font-family:var(--mono);font-size:14px}
+.tr-item .tw .gold{color:var(--muted)}
+.ok{color:var(--green)} .no{color:var(--red)}
+.tr-empty{padding:30px 18px;font-size:13.5px;color:var(--muted);font-style:italic}
+.deploy-note{margin-top:22px;font-size:12.5px;color:var(--muted);border-left:2px solid var(--grid-2);padding-left:14px;line-height:1.7;max-width:76ch}
+@media(max-width:960px){.probe-grid{grid-template-columns:1fr}}
+
+/* ---------- field ---------- */
+.field{padding:104px 0;border-bottom:1px solid var(--grid)}
+.field .inner{max-width:740px;margin:0 auto}
+.def{font-family:var(--serif);font-size:clamp(18px,2vw,21px);line-height:1.7;border:1px solid var(--grid-2);background:var(--card);border-radius:var(--r);padding:26px 30px;margin:34px 0 44px}
+.def .hw{font-weight:600}
+.def .ipa{font-family:var(--mono);font-size:.75em;color:var(--muted)}
+.def .pos{font-style:italic;color:var(--red)}
+.field p.long{font-family:var(--serif);font-size:18px;line-height:1.75;color:var(--ink-2);margin-bottom:24px}
+.field p.long b{color:var(--ink)}
+.claims{margin-top:46px;border-top:1px solid var(--grid)}
+.claim{display:grid;grid-template-columns:110px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--grid)}
+.claim .k{font-family:var(--mono);font-size:11.5px;color:var(--red);letter-spacing:.1em;padding-top:5px}
+.claim h3{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:7px;letter-spacing:-.01em}
+.claim p{font-size:14.5px;color:var(--muted);line-height:1.65}
+@media(max-width:640px){.claim{grid-template-columns:1fr;gap:8px}}
+
+/* ---------- pillars ---------- */
+.pillars{padding:96px 0;background:var(--card);border-bottom:1px solid var(--grid)}
+.pillars-h{max-width:680px;margin-bottom:48px}
+.pillars-h .h-sec{margin:18px 0 14px}
+.pillars-h p{color:var(--muted);font-size:16px}
+.pillar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pillar{background:var(--paper);border:1px solid var(--grid-2);border-radius:var(--r);padding:26px 24px;position:relative;transition:.2s}
+.pillar:hover{transform:translateY(-3px);box-shadow:0 16px 34px -20px rgba(16,22,26,.3)}
+.pillar::before{content:"";position:absolute;top:-1px;left:24px;width:44px;height:3px}
+.pillar.pi-red::before{background:var(--red)}
+.pillar.pi-blue::before{background:var(--blue)}
+.pillar.pi-green::before{background:var(--green)}
+.pillar .dm{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:14px}
+.pillar h3{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.012em;margin-bottom:12px;line-height:1.25}
+.pillar p{font-size:14px;color:var(--ink-2);line-height:1.65;margin-bottom:16px}
+.pillar ul{list-style:none;border-top:1px dashed var(--grid-2);padding-top:14px}
+.pillar li{font-size:13px;color:var(--ink-2);padding:4px 0 4px 16px;position:relative;line-height:1.5}
+.pillar li::before{content:"→";position:absolute;left:0;color:var(--red);font-size:11px;top:5px}
+@media(max-width:960px){.pillar-grid{grid-template-columns:1fr}}
+
+/* ---------- lineage ---------- */
+.lineage{padding:104px 0;border-bottom:1px solid var(--grid)}
+.lineage-h{max-width:700px;margin-bottom:58px}
+.lineage-h .h-sec{margin:18px 0 14px}
+.lineage-h p{color:var(--muted);font-size:16px}
+.timeline{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:24px}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:5px;height:1px;background:linear-gradient(90deg,var(--grid-2) 0 76%,var(--red) 90% 100%)}
+.tl{position:relative;padding-top:28px}
+.tl::before{content:"";position:absolute;top:0;left:0;width:10px;height:10px;border-radius:50%;background:var(--paper);border:2px solid var(--ink-2)}
+.tl.now::before{background:var(--red);border-color:var(--red)}
+.tl .yr{font-family:var(--mono);font-size:12px;color:var(--red);letter-spacing:.06em;display:block;margin-bottom:7px}
+.tl h4{font-family:var(--serif);font-size:16.5px;font-weight:600;line-height:1.3;margin-bottom:6px}
+.tl p{font-size:12.5px;color:var(--muted);line-height:1.6}
+@media(max-width:960px){
+  .timeline{grid-template-columns:1fr;gap:0}
+  .timeline::before{left:4px;right:auto;top:0;bottom:0;width:1px;height:auto;background:linear-gradient(180deg,var(--grid-2) 0 76%,var(--red) 90% 100%)}
+  .tl{padding:0 0 30px 30px}
+  .tl::before{top:4px}
 }
 
-.hero-inner{
-  max-width:1400px;
-  width:100%;
-  margin:auto;
-  display:grid;
-  grid-template-columns:1.1fr 0.9fr;
-  gap:70px;
-  align-items:center;
-}
+/* ---------- roadmap ---------- */
+.roadmap{padding:96px 0;background:var(--card);border-bottom:1px solid var(--grid)}
+.roadmap-h{max-width:700px;margin-bottom:46px}
+.roadmap-h .h-sec{margin:18px 0 14px}
+.roadmap-h p{color:var(--muted);font-size:16px}
+.phase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.phase{background:var(--paper);border:1px solid var(--grid-2);border-radius:var(--r);padding:26px 24px}
+.phase .wn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:12px;color:var(--red)}
+.phase.done .wn{color:var(--green)}
+.phase h4{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:12px}
+.phase ul{list-style:none}
+.phase li{font-size:13.5px;color:var(--ink-2);padding:7px 0 7px 22px;position:relative;line-height:1.5;border-top:1px dashed var(--grid)}
+.phase li:first-child{border-top:none}
+.phase li::before{content:"";position:absolute;left:2px;top:13px;width:8px;height:8px;border:1.5px solid var(--red);border-radius:2px}
+.phase.done li::before{content:"✓";border:none;color:var(--green);font-size:12px;top:6px;width:auto;height:auto}
+@media(max-width:960px){.phase-grid{grid-template-columns:1fr}}
 
-.eyebrow{
-  color:var(--accent);
-  text-transform:uppercase;
-  letter-spacing:0.28em;
-  font-size:0.72rem;
-  margin-bottom:24px;
-}
+/* ---------- founder / refs / footer ---------- */
+.founder{padding:104px 0}
+.founder .inner{max-width:740px;margin:0 auto}
+.founder .h-sec{margin:18px 0 24px}
+.founder p{font-family:var(--serif);font-size:17.5px;line-height:1.75;color:var(--ink-2);margin-bottom:20px}
+.sig{margin-top:32px;display:flex;align-items:center;gap:16px;border-top:1px solid var(--grid);padding-top:26px}
+.sig .mk{width:50px;height:50px;flex:none;border:1px solid var(--grid-2);border-radius:50%;display:grid;place-items:center;background:var(--card);font-family:var(--serif);font-weight:600;font-size:17px;color:var(--red)}
+.sig b{display:block;font-family:var(--serif);font-size:16.5px;font-weight:600}
+.sig span{font-size:12.5px;color:var(--muted)}
+.refs{border-top:1px solid var(--grid);background:var(--card);padding:58px 0}
+.refs h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
+.refs ol{list-style:none;columns:2;column-gap:44px}
+.refs li{font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:11px;break-inside:avoid}
+.refs li b{color:var(--ink-2);font-weight:500}
+@media(max-width:800px){.refs ol{columns:1}}
+footer{background:var(--dark);color:var(--mut-on-dark);padding:52px 0 40px}
+.foot{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.foot .mark{color:var(--lite-on-dark)}
+.foot-links{display:flex;gap:22px;font-size:13px}
+.foot-links a:hover{color:var(--lite-on-dark)}
+.colophon{margin-top:36px;padding-top:22px;border-top:1px solid var(--dark-grid);display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em}
 
-.hero h1{
-  font-family:'Cormorant Garamond', serif;
-  font-size:clamp(3.7rem,8vw,7.5rem);
-  line-height:0.92;
-  font-weight:500;
-  margin-bottom:30px;
-  letter-spacing:-0.04em;
-}
-
-.hero h1 em{
-  font-style:italic;
-  color:var(--accent);
-}
-
-.hero p{
-  color:var(--muted);
-  font-size:1.08rem;
-  line-height:1.95;
-  max-width:720px;
-}
-
-.hero-buttons{
-  display:flex;
-  gap:16px;
-  margin-top:38px;
-  flex-wrap:wrap;
-}
-
-.btn{
-  padding:15px 26px;
-  border-radius:999px;
-  text-decoration:none;
-  transition:0.3s ease;
-  font-size:0.92rem;
-}
-
-.btn-primary{
-  background:var(--accent);
-  color:#08090d;
-  font-weight:600;
-}
-
-.btn-secondary{
-  border:1px solid var(--line);
-  color:white;
-  background:rgba(255,255,255,0.03);
-}
-
-.btn:hover{
-  transform:translateY(-3px);
-}
-
-/* ---------- card ---------- */
-
-.glass-card{
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:28px;
-  padding:38px;
-  backdrop-filter:blur(18px);
-}
-
-.glass-card small{
-  color:var(--accent);
-  letter-spacing:0.22em;
-  text-transform:uppercase;
-  font-size:0.72rem;
-}
-
-.glass-card h3{
-  margin-top:18px;
-  font-size:2rem;
-  line-height:1.15;
-  margin-bottom:18px;
-}
-
-.glass-card p{
-  font-size:0.98rem;
-  line-height:1.9;
-}
-
-/* ---------- sections ---------- */
-
-section{
-  position:relative;
-  z-index:2;
-}
-
-.section{
-  padding:120px 28px;
-}
-
-.section-inner{
-  max-width:1400px;
-  margin:auto;
-}
-
-.section-label{
-  color:var(--accent);
-  text-transform:uppercase;
-  letter-spacing:0.24em;
-  font-size:0.72rem;
-  margin-bottom:20px;
-}
-
-.section-title{
-  font-family:'Cormorant Garamond', serif;
-  font-size:clamp(2.8rem,5vw,5rem);
-  line-height:1;
-  margin-bottom:30px;
-  max-width:900px;
-}
-
-.section-text{
-  color:var(--muted);
-  line-height:2;
-  font-size:1.05rem;
-  max-width:980px;
-}
-
-/* ---------- features ---------- */
-
-.features{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:24px;
-  margin-top:60px;
-}
-
-.feature{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:24px;
-  padding:32px;
-  transition:0.3s ease;
-}
-
-.feature:hover{
-  transform:translateY(-6px);
-  border-color:rgba(211,168,92,0.3);
-}
-
-.feature h4{
-  margin-bottom:16px;
-  font-size:1.3rem;
-}
-
-.feature p{
-  color:var(--muted);
-  line-height:1.85;
-}
-
-/* ---------- research ---------- */
-
-.paper-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:28px;
-  margin-top:60px;
-}
-
-.paper{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:28px;
-  padding:38px;
-}
-
-.paper-top{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:24px;
-  color:var(--muted);
-  font-size:0.9rem;
-}
-
-.paper h3{
-  font-size:2rem;
-  line-height:1.15;
-  margin-bottom:20px;
-}
-
-.paper p{
-  color:var(--muted);
-  line-height:1.9;
-}
-
-/* ---------- founder ---------- */
-
-.founder{
-  display:grid;
-  grid-template-columns:0.85fr 1.15fr;
-  gap:60px;
-  align-items:center;
-  margin-top:70px;
-}
-
-.author-card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:28px;
-  overflow:hidden;
-}
-
-.author-image{
-  width:100%;
-  aspect-ratio:1/1;
-  object-fit:cover;
-  display:block;
-}
-
-.author-content{
-  padding:28px;
-}
-
-.author-content h3{
-  font-size:2rem;
-  margin-bottom:8px;
-}
-
-.author-role{
-  color:var(--accent);
-  text-transform:uppercase;
-  letter-spacing:0.18em;
-  font-size:0.72rem;
-  margin-bottom:20px;
-}
-
-.author-content p{
-  color:var(--muted);
-  line-height:1.9;
-}
-
-/* ---------- manifesto ---------- */
-
-.manifesto{
-  text-align:center;
-  padding:120px 28px;
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  background:rgba(255,255,255,0.02);
-}
-
-.manifesto p{
-  font-family:'Cormorant Garamond', serif;
-  font-size:clamp(1.8rem,3vw,3rem);
-  line-height:1.5;
-  max-width:1000px;
-  margin:auto;
-}
-
-.manifesto em{
-  color:var(--accent);
-  font-style:italic;
-}
-
-/* ---------- footer ---------- */
-
-footer{
-  padding:50px 28px;
-  position:relative;
-  z-index:2;
-}
-
-.footer-inner{
-  max-width:1400px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
-}
-
-.footer-inner p{
-  color:var(--muted);
-  line-height:1.7;
-}
-
-/* ---------- responsive ---------- */
-
-@media(max-width:1100px){
-
-  .hero-inner,
-  .paper-grid,
-  .founder{
-    grid-template-columns:1fr;
-  }
-
-  .features{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:760px){
-
-  .nav-links{
-    display:none;
-  }
-
-  .hero{
-    padding-top:130px;
-  }
-
-  .hero h1{
-    font-size:4rem;
-  }
-
-  .section{
-    padding:90px 22px;
-  }
-
-  .glass-card,
-  .paper,
-  .feature{
-    padding:28px;
-  }
-
-  .section-title{
-    font-size:3rem;
-  }
-
-}
-
+/* reveal */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+.reveal.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}}
 </style>
 </head>
-
 <body>
 
-<canvas id="bg-canvas"></canvas>
-
-<!-- NAV -->
-
-<nav>
-  <div class="nav-inner">
-
-    <a href="#" class="logo">
-      Agentic<span>Linguistics</span>
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="mark" href="#top" aria-label="Agentic Linguistics home">
+      <svg viewBox="0 0 30 22" fill="none" aria-hidden="true">
+        <path d="M1 15 C5 15 5 6 9 6 S13 18 17 18 21 3 25 3" stroke="#10161A" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <circle cx="9" cy="6" r="2.3" fill="#C93A2B"/>
+        <circle cx="17" cy="18" r="2.3" fill="#2B5CAD"/>
+        <circle cx="25" cy="3" r="2.3" fill="#C93A2B"/>
+      </svg>
+      Agentic&nbsp;Linguistics
     </a>
-
-    <div class="nav-links">
-      <a href="#science">Science</a>
-      <a href="#research">Research</a>
-      <a href="#framework">Framework</a>
-      <a href="#founder">Founder</a>
-    </div>
-
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#findings">Findings</a>
+      <a href="#exp001">EXP-001</a>
+      <a href="#probe">Live probe</a>
+      <a href="#field">The field</a>
+      <a href="#lineage">Lineage</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+    <a class="nav-cta" href="#exp001">RUN THE SCIENCE</a>
   </div>
-</nav>
+</header>
 
-<!-- HERO -->
+<main id="top">
 
+<!-- ============ HERO ============ -->
 <section class="hero">
-
-  <div class="hero-inner">
-
+  <div class="wrap hero-grid">
     <div>
-
-
-      <h1>
-        The Future of <em>Language Intelligence</em>
-      </h1>
-
-      <p>
-        Agentic Linguistics is a new interdisciplinary framework exploring how autonomous reasoning agents can interact with low-resource and endangered languages without requiring massive training corpora. Founded by Robert F Gatzke, the field proposes a shift from passive prediction toward dynamic linguistic reasoning.
-      </p>
-
-      <div style="height:20px;"></div>
-
-      <p>
-        By combining structured grammar systems, digitized lexicons, and autonomous tool-calling agents, Agentic Linguistics introduces a radically different path for language technology — one where even historically excluded languages can become executable in modern computational systems.
-      </p>
-
-      <div class="hero-buttons">
-        <a href="#research" class="btn btn-primary">View Research</a>
-        <a href="#framework" class="btn btn-secondary">Explore Framework</a>
+      <span class="eyebrow">An open research programme · EXP-001 results inside</span>
+      <h1 class="h-display">A new science of language. The proof runs <em>in your browser</em>.</h1>
+      <p class="lede">Agentic linguistics studies language through, with, and on autonomous agents. Its founding experiment suite — population convergence, the evolution of grammar, and a live in-context learning probe — is embedded in this page, deterministic to the bit, and will hand you the same numbers it handed us.</p>
+      <div class="hero-actions">
+        <button class="btn run" id="heroRun">▶ REPRODUCE EXP-001 · SEED-LOCKED</button>
+        <a class="btn ghost" href="#findings">Read the findings</a>
       </div>
-
+      <div class="hero-facts">
+        <div class="fact"><b>t ∝ N<sup>1.40</sup></b><span>measured convergence law, R²=0.994</span></div>
+        <div class="fact"><b>ρ = 0.98</b><span>compositional structure, evolved</span></div>
+        <div class="fact"><b>0x4be15eab</b><span>result checksum — verify it live</span></div>
+      </div>
     </div>
 
-    <div class="glass-card">
-
-      <small>
-        Foundational Paper — June 2026
-      </small>
-
-      <h3>
-        The First Publication of Agentic Linguistics
-      </h3>
-
-      <p>
-        The inaugural research paper introducing Agentic Linguistics is currently being written and will establish the theoretical architecture behind Sense–Think–Act linguistic systems, rule-based reasoning agents, and minimal-dataset language execution.
-      </p>
-
-      <div style="height:24px;"></div>
-
-      <p>
-        The framework has potentially limitless use cases involving language and agentic systems — including translation, education, cultural preservation, healthcare communication, archival technologies, and autonomous interfaces for underrepresented speech communities around the world.
-      </p>
-
+    <!-- signature: the instrument console -->
+    <div class="console" aria-label="Experiment console showing a live convergence trace from Study A">
+      <div class="con-head">
+        <span class="live"><span class="dot"></span>EXP-001A · NAMING GAME · N=100 · SEED 42</span>
+        <span>DETERMINISTIC</span>
+      </div>
+      <div class="con-body" id="traceChart"></div>
+      <div class="con-foot">
+        <span id="conStatus">reference run · checksum <b>0x4be15eab</b></span>
+        <button class="con-run" id="conRun">REPRODUCE</button>
+      </div>
     </div>
-
   </div>
-
 </section>
 
-<!-- SCIENCE -->
-
-<section class="section" id="science">
-
-  <div class="section-inner">
-
-    <div class="section-label">
-      The Science
+<!-- ============ FINDINGS ============ -->
+<section class="findings" id="findings">
+  <div class="wrap">
+    <div class="find-grid">
+      <div class="find reveal">
+        <span class="fk">FINDING 01 · STUDY A</span>
+        <span class="num">t<sub>conv</sub> ∝ N<sup>1.40</sup></span>
+        <p>Consensus in agent societies obeys a power law. Across 30 seeded runs (N = 10 → 400), convergence time scaled with exponent 1.40 (R² = 0.994) — approaching the published N<sup>3/2</sup> law for the naming game.</p>
+      </div>
+      <div class="find reveal">
+        <span class="fk">FINDING 02 · STUDY B</span>
+        <span class="num">Grammar in <i>5 generations</i></span>
+        <p>A random 16-word lexicon, transmitted through a learning bottleneck under communicative pressure, reorganized itself into shape-prefix + color-suffix morphology. Structure ρ = 0.98 ± 0.04, expressivity 99%.</p>
+      </div>
+      <div class="find reveal">
+        <span class="fk">FINDING 03 · STUDY B</span>
+        <span class="num">Two pressures, <i>not one</i></span>
+        <p>Learnability pressure alone built structure (ρ = 0.70) but collapsed 40% of meanings into ambiguity. Only learnability × expressivity yields language-like compositionality — replicating the two-pressures account in a fully deterministic model.</p>
+      </div>
     </div>
-
-    <h2 class="section-title">
-      Beyond data-intensive NLP.
-    </h2>
-
-    <p class="section-text">
-      Traditional Natural Language Processing relies on massive datasets and statistical mimicry. Agentic Linguistics instead focuses on active reasoning through structured grammar systems, explicit instructions, lexical retrieval, and autonomous decision-making. Rather than memorizing a language during training, the agent dynamically reasons through it in real time using a Sense–Think–Act methodology. As compute and token use algorithms improve, so will the theoretical use case of making agents reason undocumented languages and their minimal viable database (MVD).
-    </p>
-
-    <div class="features">
-
-      <div class="feature">
-        <h4>Sense → Think → Act</h4>
-        <p>
-          Agents perceive linguistic context, reason through structural grammar systems, and execute meaningful tasks through autonomous decision making.
-        </p>
-      </div>
-
-      <div class="feature">
-        <h4>Minimal Viable Datasets</h4>
-        <p>
-          Functional language interaction becomes possible without requiring millions of documents or internet-scale corpora.
-        </p>
-      </div>
-
-      <div class="feature">
-        <h4>Language Revitalization</h4>
-        <p>
-          Endangered and low-resource languages can gain translation systems, educational tools, archives, and computational accessibility.
-        </p>
-      </div>
-
-    </div>
-
   </div>
-
 </section>
 
-<!-- RESEARCH -->
-
-<section class="section" id="research">
-
-  <div class="section-inner">
-
-    <div class="section-label">
-      Research
+<!-- ============ EXP-001 ============ -->
+<section class="exp" id="exp001">
+  <div class="wrap">
+    <div class="exp-intro reveal">
+      <span class="eyebrow">EXP-001 · Founding experiment suite</span>
+      <h2 class="h-sec">Three studies. Fixed seeds. Your machine gets our numbers.</h2>
+      <p>Every simulation below was executed once, in a sandboxed reference environment, and frozen. The identical algorithms — same pseudo-random generator, same operation order — ship inside this page. Press reproduce anywhere and your browser recomputes the entire suite, then checks its results against the reference checksum. Agreement is bit-for-bit or it is failure.</p>
+    </div>
+    <div class="proto reveal" aria-label="Protocol summary">
+      <span class="chip"><b>PRNG</b> mulberry32, seed-locked</span>
+      <span class="chip"><b>RUNS</b> 30 (A) + 30 chains (B)</span>
+      <span class="chip"><b>VERIFY</b> FNV-1a over canonical results</span>
+      <span class="chip"><b>DEPS</b> zero — vanilla JS, no libraries</span>
+      <span class="chip"><b>CODE</b> view-source on this page</span>
     </div>
 
-    <h2 class="section-title">
-      Publications & Ongoing Work
-    </h2>
-
-    <div class="paper-grid">
-
-      <div class="paper">
-
-        <div class="paper-top">
-          <span>Foundational Paper</span>
-          <span>June 2026</span>
+    <!-- STUDY A -->
+    <div class="study reveal" id="studyA">
+      <div class="body">
+        <span class="sk">STUDY A · SYNTHETIC SPEECH COMMUNITIES</span>
+        <h3>How fast can a society agree on a word?</h3>
+        <p>N agents, no vocabulary, no coordination. Two meet at random; the speaker utters a word from its inventory (inventing one if empty); on failure the hearer memorizes it, on success both collapse their inventories to the winning word. That is the entire model — the <b>minimal naming game</b> of Baronchelli et al. (2006).</p>
+        <p>From these three rules, global consensus self-organizes: the lexicon balloons, peaks, and then collapses onto a single shared word in a sharp transition. We measured time-to-consensus for N = 10…400, five seeds each, and fit the scaling law.</p>
+        <p class="result-line">Result — consensus time scales as <i>t ∝ N<sup>1.40</sup></i> (R² = 0.994), within reach of the published N<sup>3/2</sup> law. A statistical law of language, recovered from 60 lines of code.</p>
+        <details class="methods">
+          <summary>METHODS · STUDY A</summary>
+          <div class="mth">Populations N ∈ {10, 20, 50, 100, 200, 400}; seeds <code>1000·s + N</code> for s = 1…5. Speaker and hearer drawn uniformly without replacement per interaction. Convergence = all agents hold exactly one identical word (checked every 50 interactions). Exponent from OLS on <code>ln t̄ ~ ln N</code>. The hero console shows the N=100, seed-42 trace: distinct words in circulation (red) and rolling success rate over the last 200 interactions (blue), consensus at t = 4,550.</div>
+        </details>
+      </div>
+      <div class="charts">
+        <div class="chart-card" id="cardScaling">
+          <div class="ct"><span>FIG. A1 — CONVERGENCE TIME vs POPULATION (log–log)</span><span class="verify">RECOMPUTED IN YOUR BROWSER ✓</span></div>
+          <div id="scalingChart"></div>
+          <div class="legend">
+            <span><span class="sw" style="background:var(--red-d)"></span>seeded runs (30)</span>
+            <span><span class="sw" style="background:var(--lite-on-dark)"></span>fit: slope 1.40</span>
+            <span><span class="sw" style="background:var(--gray-d);opacity:.7"></span>published: slope 1.5</span>
+          </div>
         </div>
-
-        <h3>
-          Toward an Agentic Paradigm for Low-Resource Languages
-        </h3>
-
-        <p>
-          The first publication introduces the theoretical foundations of Agentic Linguistics and explores how autonomous reasoning systems may achieve functional linguistic capability without massive training corpora. The publicational will involve two autonomous agents that to not share the same context. One will be administrating a "constructed language" (conlang) and correting the other "test" agent on its ability to use an MVD to communicate and translate an invented language.
-        </p>
-
       </div>
+    </div>
 
-      <div class="paper">
-
-        <div class="paper-top">
-          <span>Research Direction</span>
-          <span>In Progress</span>
+    <!-- STUDY B -->
+    <div class="study reveal" id="studyB">
+      <div class="body">
+        <span class="sk">STUDY B · ITERATED LEARNING</span>
+        <h3>Why is language compositional? Run the reasons.</h3>
+        <p>Sixteen meanings (4 shapes × 4 colors), a lexicon of random two-syllable words, and a chain of learners — each acquiring the language from just <b>8 of 16</b> utterances of its teacher, then teaching the next. A minimal model in the Kirby tradition, with three learner types:</p>
+        <p><b>Rote</b> memorizes what it hears and guesses the rest. <b>Learnability-only</b> generalizes: it aligns syllable positions with meaning features. <b>Both-pressures</b> generalizes <i>and</i> refuses ambiguity — no two shapes may claim the same prefix, no two colors the same suffix.</p>
+        <p class="result-line">Result — rote never finds structure (ρ ≈ 0.00). Learnability alone finds it (ρ = 0.70) but degenerates: 40% of meanings become homophones. Both pressures together produce a fully compositional, fully expressive language — ρ = 0.98, expressivity 99% — within five generations.</p>
+        <table class="outcome">
+          <thead><tr><th>CONDITION</th><th>STRUCTURE ρ (GEN 30)</th><th>EXPRESSIVITY</th><th>VERDICT</th></tr></thead>
+          <tbody>
+            <tr><td>Rote control</td><td><b>+0.002 ± 0.063</b></td><td><b>93%</b></td><td>expressive, structureless — unlearnable</td></tr>
+            <tr><td>Learnability only</td><td><b>+0.699 ± 0.165</b></td><td><b>60%</b></td><td>structured, degenerate — ambiguous</td></tr>
+            <tr class="win"><td>Learnability × expressivity</td><td><b>+0.983 ± 0.037</b></td><td><b>99%</b></td><td>compositional — language-like</td></tr>
+          </tbody>
+        </table>
+        <details class="methods">
+          <summary>METHODS · STUDY B</summary>
+          <div class="mth">Meaning space 4×4; signals = 2 syllables from an 8-syllable inventory; chains of 30 generations; bottleneck 8/16 meanings per generation (Fisher–Yates, seeded); production noise ε = 0.01 per syllable; 10 chains per condition, seeds <code>7001–7010</code>. Structure = topographic similarity: Pearson correlation between meaning-space and signal-space Hamming distances over all 120 pairs. Expressivity = distinct signals ÷ 16. The ambiguity-avoidance rule in the third condition stands in for communicative pressure, following Kirby, Tamariz, Cornish &amp; Smith (2015).</div>
+        </details>
+      </div>
+      <div class="charts">
+        <div class="chart-card" id="cardTopo">
+          <div class="ct"><span>FIG. B1 — STRUCTURE (ρ) ACROSS GENERATIONS · mean ± 1 SD, 10 chains</span><span class="verify">RECOMPUTED IN YOUR BROWSER ✓</span></div>
+          <div id="topoChart"></div>
+          <div class="legend">
+            <span><span class="sw" style="background:var(--red-d)"></span>learnability × expressivity</span>
+            <span><span class="sw" style="background:var(--blue-d)"></span>learnability only</span>
+            <span><span class="sw" style="background:var(--gray-d)"></span>rote control</span>
+          </div>
         </div>
-
-        <h3>
-          Executable Language Systems
-        </h3>
-
-        <p>
-          Current work explores real-time translation systems, interactive tutors, digital archivists, and culturally aligned interfaces powered by agentic reasoning frameworks.
-        </p>
-
+        <div class="chart-card" id="cardExpr">
+          <div class="ct"><span>FIG. B2 — EXPRESSIVITY ACROSS GENERATIONS</span><span class="verify">RECOMPUTED ✓</span></div>
+          <div id="exprChart"></div>
+        </div>
+        <div class="lexicon">
+          <div class="lt"><span>THE EVOLVED LEXICON · SEED 7001 · GENERATION 30</span><b id="lexVerify">reference</b></div>
+          <table class="lex-table" id="lexTable" aria-label="Evolved 4 by 4 lexicon: rows are shapes sharing a prefix, columns are colors sharing a suffix"></table>
+          <p class="lex-cap">Sixteen meanings, eight syllables, zero design. Rows (shapes) evolved shared prefixes; columns (colors) evolved shared suffixes — a morphology no one wrote. This language is the specimen probed live in Study C below.</p>
+        </div>
       </div>
-
     </div>
 
-  </div>
-
-</section>
-
-<!-- FRAMEWORK -->
-
-<section class="section" id="framework">
-
-  <div class="section-inner">
-
-    <div class="section-label">
-      Framework
-    </div>
-
-    <h2 class="section-title">
-      A new computational model for language interaction.
-    </h2>
-
-    <p class="section-text">
-      Agentic Linguistics reframes language understanding as an executable reasoning process rather than a memorization problem. Autonomous systems equipped with grammar blueprints, lexical databases, and structured tool access can dynamically navigate linguistic tasks in real time. This allows localized and underrepresented languages to participate in the modern digital ecosystem far earlier than traditional NLP methods would allow.
-    </p>
-
-  </div>
-
-</section>
-
-<!-- MANIFESTO -->
-
-<section class="manifesto">
-
-  <p>
-    “No language should be too small to survive the digital age. Every language deserves a computational future — and <em>Agentic Linguistics</em> is one path toward building it.”
-  </p>
-
-</section>
-
-<!-- FOUNDER -->
-
-<section class="section" id="founder">
-
-  <div class="section-inner">
-
-    <div class="section-label">
-      Founder
-    </div>
-
-    <div class="founder">
-
-      <div class="author-card">
-
-        <!-- ADD YOUR IMAGE TO SAME DIRECTORY -->
-        <img src="25.jpg" alt="Robert F Gatzke" class="author-image">
-
-      </div>
-
+    <!-- REPRODUCIBILITY -->
+    <div class="repro reveal">
       <div>
-
-        <h2 class="section-title" style="margin-bottom:14px;">
-          Robert F Gatzke
-        </h2>
-
-        <div class="author-role">
-          Founder — Agentic Linguistics
-        </div>
-
-        <p class="section-text" style="max-width:760px;">
-          Robert F Gatzke, a graduate from The University of Massachusetts Linguistics Department, is the founder of Agentic Linguistics, an emerging framework positioned at the intersection of artificial intelligence, computational linguistics, autonomous systems, and language revitalization research.
-        </p>
-
-        <div style="height:22px;"></div>
-
-        <p class="section-text" style="max-width:760px;">
-          His work challenges the assumption that large-scale memorization is the only path toward computational language intelligence. By focusing on reasoning-driven architectures and executable linguistic systems, Agentic Linguistics proposes a fundamentally different direction for AI interaction with human language.
-        </p>
-
+        <span class="eyebrow">Reproducibility contract</span>
+        <h3>Distrust us. Then press the button.</h3>
+        <p>The reference run serialized every convergence time and every structure curve into a canonical string and hashed it: <code>FNV-1a = 0x4be15eab</code>. Your browser re-executes all sixty simulations with the same seeds — typically in under a second — rebuilds the same string, and re-hashes it. One flipped bit anywhere, in any of the ~10⁶ simulated interactions, and the hashes diverge.</p>
+        <p>This is the founding methodological commitment of agentic linguistics: <code>a result you cannot rerun is a rumor.</code> Every experiment this programme publishes ships as data + seed + executable method, embedded where the claim is made.</p>
+        <button class="btn run" id="reproRun" style="margin-top:8px">▶ RUN ALL 60 SIMULATIONS · VERIFY 0x4be15eab</button>
+        <p id="reproStatus" class="mono" style="margin-top:14px;font-size:12px;color:var(--mut-on-dark)"></p>
       </div>
-
+      <div class="not">
+        <span class="nk">WHAT THESE RESULTS ARE — AND ARE NOT</span>
+        <ul>
+          <li>They are classical-model replications, chosen because their ground truth is known — the calibration shot before pointing the instrument at open questions.</li>
+          <li>Minimal agents are not humans. Claims here are about population dynamics and transmission, not about human cognition.</li>
+          <li>The scaling exponent comes from 6 population sizes × 5 seeds — demonstration-grade. The programme's next run scales to N = 10⁴ with confidence intervals.</li>
+          <li>The genuinely new object is the method: experiments that carry their own verification, and evaluation languages that cannot leak into training data — see Study C.</li>
+        </ul>
+      </div>
     </div>
-
   </div>
-
 </section>
 
-<!-- FOOTER -->
-
-<footer>
-
-  <div class="footer-inner">
-
-    <p>
-      © 2026 AgenticLinguistics.com
-    </p>
-
-    <p>
-      Founded by Robert F Gatzke
-    </p>
-
+<!-- ============ STUDY C · LIVE PROBE ============ -->
+<section class="probe" id="probe">
+  <div class="wrap">
+    <div class="probe-head reveal">
+      <span class="eyebrow">Study C · Live in-context learning probe</span>
+      <h2 class="h-sec">A language the internet has never seen. Test a frontier model on it — now.</h2>
+      <p>Benchmark contamination is the quiet crisis of AI evaluation: if a test language exists anywhere online, a model may have memorized it. Study C makes contamination <b>structurally impossible</b>: the target language is the one that evolved in Study B, born from seed 7001 inside this page. It exists in no corpus, no archive, no training set — anywhere.</p>
+      <p>Press run and a live frontier model (Claude) receives K attested word–meaning pairs and must produce the words for four held-out meanings — exactly the in-context task facing agents documenting a real low-resource language from a minimum viable dataset. Scoring is automatic, against the evolved ground truth, at whole-word and morpheme level.</p>
+    </div>
+    <div class="probe-grid reveal">
+      <div class="panel">
+        <div class="panel-h"><span>FIG. C1 — ACCURACY vs TRAINING EXAMPLES (K)</span><span id="probeModel">claude-sonnet-4-6 · live</span></div>
+        <div class="panel-b" id="probeChart"></div>
+        <div id="probeCtl">
+          <button class="btn run" id="probeRun">▶ RUN LIVE PROBE · K = 2, 4, 8, 12</button>
+          <span id="probeStatus">idle — 4 API calls, ~20 s</span>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><span>ELICITATION TRANSCRIPT</span><span>HELD-OUT MEANINGS: 4</span></div>
+        <div class="transcript" id="transcript">
+          <div class="tr-empty">No live data yet. The transcript will show, per held-out meaning, the model's word against the evolved gold form — graded per morpheme, field-linguistics style.</div>
+        </div>
+      </div>
+    </div>
+    <p class="deploy-note reveal">Deployment note: inside Claude, this page can call the model directly. When hosted at agenticlinguistics.com, route the same request through a one-file proxy holding your API key — the page degrades gracefully and everything else (Studies A &amp; B, verification) runs fully offline.</p>
   </div>
+</section>
 
+<!-- ============ THE FIELD ============ -->
+<section class="field" id="field">
+  <div class="wrap">
+    <div class="inner reveal">
+      <span class="eyebrow">The field</span>
+      <h2 class="h-sec" style="margin-top:18px">Linguistics never had an instrument. Now it has a laboratory.</h2>
+      <div class="def">
+        <span class="hw">agentic linguistics</span>
+        <span class="ipa">/eɪˌdʒɛn.tɪk lɪŋˈɡwɪs.tɪks/</span>
+        <span class="pos">n.</span> —
+        the scientific study of human language conducted <b>through</b>, <b>with</b>, and <b>on</b> autonomous machine agents.
+      </div>
+      <p class="long">Astronomy had the telescope. Biology had the microscope, then a model organism. Linguistics has had neither: no device that holds an entire language in view, and no organism on which the forbidden experiments — sealing off a speech community, rerunning a contact event, watching grammar change under controlled pressure — could ever ethically run.</p>
+      <p class="long">That changed. There now exist artificial systems that <b>use</b> language rather than merely count it — and they compose into agents that converse, remember, form populations, execute a field linguist's workflow, and learn a language they have never seen from a sketch grammar placed in front of them. Agentic linguistics is the field that treats this as science, and holds itself to the standard demonstrated above: claims that arrive with their own reproduction.</p>
+      <div class="claims">
+        <div class="claim">
+          <span class="k">CLAIM 01</span>
+          <div>
+            <h3>Agents are the field's first instrument.</h3>
+            <p>An agent that transcribes, segments, glosses, and queries around the clock collapses the labor bottleneck that has defined descriptive linguistics since Boas. The linguist's judgment stays; the drudgery goes.</p>
+          </div>
+        </div>
+        <div class="claim">
+          <span class="k">CLAIM 02</span>
+          <div>
+            <h3>Agent societies are the model organism for language change.</h3>
+            <p>Populations of conversing agents are to linguistics what Drosophila is to genetics: not the real thing — a system where hypotheses about drift, contact, and complexity can finally be intervened on, rerun, and falsified. EXP-001 is the proof of principle.</p>
+          </div>
+        </div>
+        <div class="claim">
+          <span class="k">CLAIM 03</span>
+          <div>
+            <h3>No language should need the internet's worth of data to survive.</h3>
+            <p>Agents learn new languages in context — from a wordlist, a sketch grammar, hours of recordings. The unit of survival becomes the minimum viable dataset, not the billion-token corpus. Study C is that thesis, measured live.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PILLARS ============ -->
+<section class="pillars" id="pillars">
+  <div class="wrap">
+    <div class="pillars-h reveal">
+      <span class="eyebrow">Research programme</span>
+      <h2 class="h-sec">Three pillars, one discipline.</h2>
+      <p>Each pillar takes a branch of linguistics and asks what becomes possible when autonomous agents enter it — as subjects, instruments, or teachers.</p>
+    </div>
+    <div class="pillar-grid">
+      <article class="pillar pi-red reveal">
+        <span class="dm">I · Theoretical</span>
+        <h3>Synthetic speech communities</h3>
+        <p>Populations of memory-bearing agents conversing across thousands of generations — a laboratory for language change. Seal a community and measure drift; stage contact and watch for creole-like simplification; vary population size and test the linguistic-niche hypothesis under controlled conditions.</p>
+        <ul>
+          <li>Forbidden experiments, run ethically in silico</li>
+          <li>Grammaticalization observed end-to-end, not reconstructed</li>
+          <li>Predictions checked against WALS &amp; Grambank typology</li>
+        </ul>
+      </article>
+      <article class="pillar pi-blue reveal">
+        <span class="dm">II · Documentary</span>
+        <h3>Machine field linguistics</h3>
+        <p>An orchestrated agent team that runs the documentation workflow — transcription, segmentation, interlinear glossing, lexicography, grammar sketching — with a native speaker verifying every claim. No pretraining on the language. No fine-tuning. Everything learned in context from a minimum viable dataset.</p>
+        <ul>
+          <li>Years of glossing compressed into speaker-verified weeks</li>
+          <li>Active elicitation: ask the sentence that teaches the most</li>
+          <li>Archive-ready output: interlinear corpora, lexicon, sketch</li>
+        </ul>
+      </article>
+      <article class="pillar pi-green reveal">
+        <span class="dm">III · Applied</span>
+        <h3>Agentic language pedagogy</h3>
+        <p>The dataset that documents a language can teach it. An agent that learned a language in context becomes a patient, always-on conversation partner — for heritage learners of a language with twelve remaining speakers, or any classroom whose language has no textbook and no market.</p>
+        <ul>
+          <li>Tutors for languages commercial tools will never build</li>
+          <li>Revitalization that multiplies speakers' time</li>
+          <li>Documentation and pedagogy fused into one loop</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LINEAGE ============ -->
+<section class="lineage" id="lineage">
+  <div class="wrap">
+    <div class="lineage-h reveal">
+      <span class="eyebrow">Scientific lineage</span>
+      <h2 class="h-sec">The pieces existed. No one had named the field.</h2>
+      <p>Agentic linguistics names a convergence three decades in the making — and answers it with a research programme and a reproducibility contract.</p>
+    </div>
+    <div class="timeline reveal">
+      <div class="tl"><span class="yr">1997</span><h4>Language games</h4><p>Steels' Talking Heads: embodied agents negotiate shared vocabularies from nothing. Language emergence becomes experimental.</p></div>
+      <div class="tl"><span class="yr">2008</span><h4>Iterated learning</h4><p>Kirby, Cornish &amp; Smith show structure emerging as language passes through human learners — the bottleneck made visible.</p></div>
+      <div class="tl"><span class="yr">2023</span><h4>Generative agent societies</h4><p>Park et al.'s generative agents form believable social worlds. LLM populations become plausible model organisms.</p></div>
+      <div class="tl"><span class="yr">2024</span><h4>One grammar book</h4><p>MTOB: an LLM translates Kalamang — unseen in training — from a single grammar book in context. The minimum-viable-dataset era opens.</p></div>
+      <div class="tl now"><span class="yr">2026</span><h4>Agentic linguistics</h4><p>Agent-driven corpus analysis arrives; the threads converge. This page names the field — and runs its founding experiments.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section class="roadmap" id="roadmap">
+  <div class="wrap">
+    <div class="roadmap-h reveal">
+      <span class="eyebrow">Roadmap</span>
+      <h2 class="h-sec">Everything ships in the open — failures included.</h2>
+      <p>A field is founded by results, not declarations. Phase one is already live on this page.</p>
+    </div>
+    <div class="phase-grid">
+      <div class="phase done reveal">
+        <span class="wn">Shipped · with this site</span>
+        <h4>Calibrate the instrument</h4>
+        <ul>
+          <li>EXP-001 A: naming-game scaling law, seed-locked, checksummed</li>
+          <li>EXP-001 B: two-pressures compositionality, 30 chains, verified</li>
+          <li>Study C: contamination-free live probe of a frontier model</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="wn">Next · Q4 2026</span>
+        <h4>Point it at open questions</h4>
+        <ul>
+          <li>Scale Study A to N = 10⁴; exponent with confidence intervals</li>
+          <li>Fieldkit v0.1 + MVD-Bench: agent documentation of 3 real held-out languages, graded against expert annotation</li>
+          <li>Position paper: <em>Toward Agentic Linguistics</em>, with this suite as artifact</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <span class="wn">Then · 2027</span>
+        <h4>Open the laboratory</h4>
+        <ul>
+          <li>EXP-002 Drift Observatory: sealed LLM-agent communities, 10⁴ generations</li>
+          <li>First community partnership with a language revitalization programme</li>
+          <li>Agentic Linguistics workshop proposal (ACL / LSA)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOUNDER ============ -->
+<section class="founder" id="founder">
+  <div class="wrap">
+    <div class="inner reveal">
+      <span class="eyebrow">Founder's note</span>
+      <h2 class="h-sec">A field with one founder is just a thesis. Good.</h2>
+      <p>Agentic Linguistics began with an observation: the tools that will decide whether thousands of languages survive this century are being built by people who have never glossed a sentence — and the people who gloss sentences rarely get to steer the tools. This programme sits deliberately in the gap.</p>
+      <p>Its standard is on display above: no claim without a seed, no result without a rerun button, no benchmark a model could have memorized. If you work on agents, on documentation, on revitalization — or you speak a language the internet forgot — the loop has a place for you.</p>
+      <div class="sig">
+        <span class="mk" aria-hidden="true">RG</span>
+        <div>
+          <b>Robert Gatzke</b>
+          <span>Founder, Agentic Linguistics · hello@agenticlinguistics.com</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REFERENCES ============ -->
+<div class="refs">
+  <div class="wrap">
+    <h4>Lineage &amp; grading references</h4>
+    <ol>
+      <li><b>Baronchelli, A. et al. (2006).</b> Sharp transition towards shared vocabularies in multi-agent systems. <i>J. Stat. Mech.</i> — Study A's target law.</li>
+      <li><b>Steels, L. (1997–2001).</b> The Talking Heads experiment: language games among embodied agents.</li>
+      <li><b>Kirby, S., Cornish, H. &amp; Smith, K. (2008).</b> Cumulative cultural evolution in the laboratory. <i>PNAS.</i></li>
+      <li><b>Kirby, S., Tamariz, M., Cornish, H. &amp; Smith, K. (2015).</b> Compression and communication in the cultural evolution of linguistic structure. <i>Cognition</i> — Study B's target account.</li>
+      <li><b>Lupyan, G. &amp; Dale, R. (2010).</b> Language structure is partly determined by social structure. <i>PLoS ONE.</i></li>
+      <li><b>Park, J. S. et al. (2023).</b> Generative agents: interactive simulacra of human behavior.</li>
+      <li><b>Tanzer, G. et al. (2024).</b> A benchmark for learning to translate a new language from one grammar book (MTOB).</li>
+      <li><b>Aycock, S. et al. (2024).</b> Can LLMs really learn to translate a low-resource language from one grammar book?</li>
+      <li><b>Cahyawijaya, S. et al. (2024).</b> LLMs are few-shot in-context low-resource language learners. <i>NAACL.</i></li>
+      <li><b>Plaat, A. et al. (2025).</b> Agentic large language models: a survey.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <a class="mark" href="#top" aria-label="Back to top">
+        <svg viewBox="0 0 30 22" fill="none" aria-hidden="true">
+          <path d="M1 15 C5 15 5 6 9 6 S13 18 17 18 21 3 25 3" stroke="#E9EEEA" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+          <circle cx="9" cy="6" r="2.3" fill="#E8604F"/>
+          <circle cx="17" cy="18" r="2.3" fill="#6C97E0"/>
+          <circle cx="25" cy="3" r="2.3" fill="#E8604F"/>
+        </svg>
+        Agentic&nbsp;Linguistics
+      </a>
+      <nav class="foot-links" aria-label="Footer">
+        <a href="#findings">Findings</a>
+        <a href="#exp001">EXP-001</a>
+        <a href="#probe">Live probe</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="mailto:hello@agenticlinguistics.com">Contact</a>
+      </nav>
+    </div>
+    <div class="colophon">
+      <span>© 2026 Agentic Linguistics · agenticlinguistics.com · seed 42 · checksum 0x4be15eab</span>
+      <span>Set in Spectral, IBM Plex Sans &amp; IBM Plex Mono</span>
+    </div>
+  </div>
 </footer>
+</main>
 
-<script>
+<noscript><div style="padding:16px 28px;font-family:monospace;background:#C93A2B;color:#fff">JavaScript is off — the embedded experiments and charts need it. The reference results and methods above remain readable.</div></noscript>
 
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-
-let w,h;
-let particles = [];
-
-function resize(){
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+<!-- ================= SCIENCE (no DOM; identical to the Python reference implementation) ================= -->
+<script id="science">
+"use strict";
+/* mulberry32 — bit-identical to the Python reference */
+function mulberry32(seed){
+  let a = seed >>> 0;
+  return function(){
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1) >>> 0;
+    t = (t ^ ((t + Math.imul(t ^ (t >>> 7), t | 61)) >>> 0)) >>> 0;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
 }
-
-window.addEventListener('resize', resize);
-resize();
-
-for(let i=0;i<55;i++){
-  particles.push({
-    x:Math.random()*w,
-    y:Math.random()*h,
-    vx:(Math.random()-0.5)*0.25,
-    vy:(Math.random()-0.5)*0.25,
-    r:Math.random()*2+1
-  });
-}
-
-function animate(){
-
-  ctx.clearRect(0,0,w,h);
-
-  for(let i=0;i<particles.length;i++){
-
-    let p = particles[i];
-
-    for(let j=i+1;j<particles.length;j++){
-
-      let p2 = particles[j];
-
-      let dx = p.x-p2.x;
-      let dy = p.y-p2.y;
-
-      let dist = Math.sqrt(dx*dx+dy*dy);
-
-      if(dist < 170){
-
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y);
-        ctx.lineTo(p2.x,p2.y);
-
-        ctx.strokeStyle = `rgba(211,168,92,${0.12-(dist/1700)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-
-      }
-
-    }
-
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle = 'rgba(211,168,92,0.45)';
-    ctx.fill();
-
-    p.x += p.vx;
-    p.y += p.vy;
-
-    if(p.x < 0 || p.x > w) p.vx *= -1;
-    if(p.y < 0 || p.y > h) p.vy *= -1;
-
+function randint(rnd, n){ return Math.floor(rnd() * n); }
+function r4int(x){ const s = x < 0 ? -1 : 1; return s * Math.floor(Math.abs(x) * 10000 + 0.5); }
+function fnv1a(str){
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
   }
-
-  requestAnimationFrame(animate);
-
+  return h >>> 0;
 }
 
-animate();
+/* ---------- STUDY A ---------- */
+function namingGame(N, seed, series){
+  const rnd = mulberry32(seed);
+  const inv = []; for (let i = 0; i < N; i++) inv.push([]);
+  let counter = 0, step = 0;
+  const ts = {t:[], words:[], mem:[], succ:[]};
+  const win = [];
+  const maxSteps = 4000000;
+  while (step < maxSteps){
+    step++;
+    const sp = randint(rnd, N);
+    let he = randint(rnd, N - 1);
+    if (he >= sp) he++;
+    if (inv[sp].length === 0){ inv[sp].push(counter); counter++; }
+    const w = inv[sp][randint(rnd, inv[sp].length)];
+    if (inv[he].includes(w)){ inv[sp] = [w]; inv[he] = [w]; win.push(1); }
+    else { inv[he].push(w); win.push(0); }
+    if (win.length > 200) win.shift();
+    if (series && step % Math.max(1, N) === 0){
+      const uniq = new Set(); let mem = 0;
+      for (const a of inv){ mem += a.length; for (const x of a) uniq.add(x); }
+      ts.t.push(step); ts.words.push(uniq.size); ts.mem.push(mem);
+      let s = 0; for (const v of win) s += v;
+      ts.succ.push(s / win.length);
+    }
+    if (step % 50 === 0){
+      const w0 = inv[0].length === 1 ? inv[0][0] : null;
+      if (w0 !== null){
+        let all = true;
+        for (const a of inv){ if (a.length !== 1 || a[0] !== w0){ all = false; break; } }
+        if (all) return series ? {tconv: step, ts} : step;
+      }
+    }
+  }
+  return series ? {tconv: null, ts} : null;
+}
+function studyA_run(){
+  const Ns = [10, 20, 50, 100, 200, 400], seeds = [1, 2, 3, 4, 5];
+  const tconv = {};
+  for (const N of Ns){
+    tconv[N] = [];
+    for (const s of seeds) tconv[N].push(namingGame(N, 1000 * s + N, false));
+  }
+  const tr = namingGame(100, 42, true);
+  const xs = [], ys = [];
+  for (const N of Ns){
+    let m = 0; for (const v of tconv[N]) m += v;
+    m /= tconv[N].length;
+    xs.push(Math.log(N)); ys.push(Math.log(m));
+  }
+  const n = xs.length;
+  let mx = 0, my = 0;
+  for (const x of xs) mx += x; mx /= n;
+  for (const y of ys) my += y; my /= n;
+  let num = 0, den = 0;
+  for (let i = 0; i < n; i++){ num += (xs[i] - mx) * (ys[i] - my); den += (xs[i] - mx) ** 2; }
+  const slope = num / den, intercept = my - slope * mx;
+  let ssr = 0, sst = 0;
+  for (let i = 0; i < n; i++){ ssr += (ys[i] - (slope * xs[i] + intercept)) ** 2; sst += (ys[i] - my) ** 2; }
+  const r2 = 1 - ssr / sst;
+  return {Ns, seeds, tconv, slope, intercept, r2,
+          trace: {N: 100, seed: 42, tconv: tr.tconv, t: tr.ts.t, words: tr.ts.words, mem: tr.ts.mem, succ: tr.ts.succ}};
+}
 
+/* ---------- STUDY B ---------- */
+const SYL = ["ka","po","mu","ti","re","no","su","fa"];
+const NV = 4, NM = 16, NS = 8, GENS = 30, BOTTLENECK = 8, NOISE = 0.01;
+function topoSim(lang){
+  const dm = [], ds = [];
+  for (let a = 0; a < NM; a++){
+    const ia = Math.floor(a / NV), ja = a % NV;
+    for (let b = a + 1; b < NM; b++){
+      const ib = Math.floor(b / NV), jb = b % NV;
+      dm.push((ia !== ib ? 1 : 0) + (ja !== jb ? 1 : 0));
+      ds.push((lang[a][0] !== lang[b][0] ? 1 : 0) + (lang[a][1] !== lang[b][1] ? 1 : 0));
+    }
+  }
+  const n = dm.length;
+  let mdm = 0, mds = 0;
+  for (const x of dm) mdm += x; mdm /= n;
+  for (const y of ds) mds += y; mds /= n;
+  let cov = 0, vx = 0, vy = 0;
+  for (let i = 0; i < n; i++) cov += (dm[i] - mdm) * (ds[i] - mds);
+  for (let i = 0; i < n; i++) vx += (dm[i] - mdm) ** 2;
+  for (let i = 0; i < n; i++) vy += (ds[i] - mds) ** 2;
+  if (vx === 0 || vy === 0) return 0.0;
+  return cov / Math.sqrt(vx * vy);
+}
+function expressivity(lang){
+  const s = new Set();
+  for (const w of lang) s.add(w[0] + ":" + w[1]);
+  return s.size / NM;
+}
+function shuffledIdx(rnd, n){
+  const idx = []; for (let i = 0; i < n; i++) idx.push(i);
+  for (let i = n - 1; i > 0; i--){
+    const j = randint(rnd, i + 1);
+    const tmp = idx[i]; idx[i] = idx[j]; idx[j] = tmp;
+  }
+  return idx;
+}
+function argmaxOrRandom(counts, rnd){
+  let best = -1, bi = -1;
+  for (let k = 0; k < NS; k++){ if (counts[k] > best){ best = counts[k]; bi = k; } }
+  if (best <= 0) return randint(rnd, NS);
+  return bi;
+}
+function assignDistinct(C, rnd){
+  const order = [0, 1, 2, 3].sort((a, b) => {
+    const ma = Math.max(...C[a]), mb = Math.max(...C[b]);
+    return (mb - ma) || (a - b);
+  });
+  const claimed = new Array(NS).fill(false);
+  const out = new Array(NV).fill(0);
+  for (const v of order){
+    let best = -1, bi = -1;
+    for (let k = 0; k < NS; k++){
+      if (!claimed[k] && C[v][k] > best){ best = C[v][k]; bi = k; }
+    }
+    if (best <= 0){
+      const free = []; for (let k = 0; k < NS; k++) if (!claimed[k]) free.push(k);
+      bi = free[randint(rnd, free.length)];
+    }
+    claimed[bi] = true; out[v] = bi;
+  }
+  return out;
+}
+function runChain(seed, learner){
+  const rnd = mulberry32(seed);
+  let lang = [];
+  for (let m = 0; m < NM; m++) lang.push([randint(rnd, NS), randint(rnd, NS)]);
+  const topo = [topoSim(lang)], expr = [expressivity(lang)];
+  for (let g = 0; g < GENS; g++){
+    const observed = shuffledIdx(rnd, NM).slice(0, BOTTLENECK);
+    let nw = [];
+    if (learner === "generalizer" || learner === "communicator"){
+      const C1 = [], C2 = [];
+      for (let v = 0; v < NV; v++){ C1.push(new Array(NS).fill(0)); C2.push(new Array(NS).fill(0)); }
+      for (const m of observed){
+        const i = Math.floor(m / NV), j = m % NV;
+        C1[i][lang[m][0]]++; C2[j][lang[m][1]]++;
+      }
+      if (learner === "generalizer"){
+        for (let m = 0; m < NM; m++){
+          const i = Math.floor(m / NV), j = m % NV;
+          nw.push([argmaxOrRandom(C1[i], rnd), argmaxOrRandom(C2[j], rnd)]);
+        }
+      } else {
+        const map1 = assignDistinct(C1, rnd), map2 = assignDistinct(C2, rnd);
+        for (let m = 0; m < NM; m++){
+          const i = Math.floor(m / NV), j = m % NV;
+          nw.push([map1[i], map2[j]]);
+        }
+      }
+    } else { /* rote */
+      const seen = {};
+      for (const m of observed) seen[m] = [lang[m][0], lang[m][1]];
+      for (let m = 0; m < NM; m++){
+        if (m in seen) nw.push([seen[m][0], seen[m][1]]);
+        else nw.push([randint(rnd, NS), randint(rnd, NS)]);
+      }
+    }
+    for (let m = 0; m < NM; m++){
+      if (rnd() < NOISE) nw[m][0] = randint(rnd, NS);
+      if (rnd() < NOISE) nw[m][1] = randint(rnd, NS);
+    }
+    lang = nw;
+    topo.push(topoSim(lang)); expr.push(expressivity(lang));
+  }
+  return {topo, expr, lang};
+}
+function studyB_run(){
+  const seeds = [1,2,3,4,5,6,7,8,9,10];
+  const out = {};
+  for (const learner of ["rote", "generalizer", "communicator"]){
+    const topos = [], exprs = [];
+    let finalLang = null;
+    for (const s of seeds){
+      const r = runChain(7000 + s, learner);
+      topos.push(r.topo); exprs.push(r.expr);
+      if (s === 1 && learner === "communicator") finalLang = r.lang;
+    }
+    const gens = GENS + 1, meanT = [], sdT = [], meanE = [];
+    for (let g = 0; g < gens; g++){
+      let mt = 0; for (const t of topos) mt += t[g]; mt /= seeds.length;
+      let v = 0; for (const t of topos) v += (t[g] - mt) ** 2;
+      meanT.push(mt); sdT.push(Math.sqrt(v / seeds.length));
+      let me = 0; for (const e of exprs) me += e[g]; me /= seeds.length;
+      meanE.push(me);
+    }
+    out[learner] = {topo_mean: meanT, topo_sd: sdT, expr_mean: meanE};
+    if (finalLang !== null){
+      out.final_language_seed7001 = finalLang.map(w => [SYL[w[0]], SYL[w[1]]]);
+    }
+  }
+  out.seeds = seeds;
+  return out;
+}
+
+/* ---------- full suite + checksum ---------- */
+function runAllScience(){
+  const A = studyA_run();
+  const B = studyB_run();
+  const parts = [];
+  for (const N of A.Ns) for (const v of A.tconv[N]) parts.push(String(v));
+  parts.push(String(r4int(A.slope)));
+  for (let g = 0; g < GENS + 1; g++){
+    parts.push(String(r4int(B.rote.topo_mean[g])));
+    parts.push(String(r4int(B.generalizer.topo_mean[g])));
+    parts.push(String(r4int(B.communicator.topo_mean[g])));
+  }
+  const canon = parts.join("|");
+  const checksum = fnv1a(canon);
+  return {A, B, checksumHex: checksum.toString(16).padStart(8, "0"), canonLen: canon.length};
+}
+if (typeof module !== "undefined") module.exports = {runAllScience, runChain, mulberry32, randint, shuffledIdx, SYL, GENS};
 </script>
 
+<!-- ================= REFERENCE RESULTS (frozen from the sandbox run) ================= -->
+<script id="refdata">
+const REF = {"A": {"Ns": [10, 20, 50, 100, 200, 400], "seeds": [1, 2, 3, 4, 5], "tconv": {"10": [50, 100, 50, 100, 100], "20": [400, 200, 200, 350, 250], "50": [850, 750, 1000, 1250, 1850], "100": [2300, 2650, 2150, 2500, 1850], "200": [8000, 7400, 7200, 4900, 5550], "400": [12400, 19000, 10150, 14800, 19350]}, "slope": 1.3997039294025402, "intercept": 1.3455608023817005, "r2": 0.994409392993839, "trace": {"N": 100, "seed": 42, "tconv": 4550, "t": [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500], "words": [49, 53, 56, 54, 54, 53, 51, 48, 46, 46, 41, 40, 39, 37, 35, 34, 32, 26, 24, 21, 15, 14, 12, 10, 7, 7, 7, 5, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2], "mem": [146, 246, 318, 329, 389, 379, 388, 378, 359, 375, 375, 342, 351, 359, 279, 272, 278, 262, 249, 213, 202, 183, 158, 157, 156, 148, 151, 137, 148, 144, 144, 148, 147, 137, 135, 136, 125, 132, 126, 119, 112, 110, 108, 106, 103], "succ": [0.01, 0.01, 0.04, 0.1, 0.095, 0.09, 0.11, 0.125, 0.155, 0.14, 0.125, 0.165, 0.18, 0.15, 0.23, 0.27, 0.21, 0.21, 0.24, 0.28, 0.305, 0.365, 0.435, 0.45, 0.46, 0.5, 0.5, 0.49, 0.465, 0.46, 0.51, 0.485, 0.465, 0.505, 0.52, 0.53, 0.59, 0.63, 0.655, 0.72, 0.795, 0.835, 0.855, 0.905, 0.955]}}, "B": {"rote": {"topo_mean": [0.012887554458538347, -0.028867128433494336, 0.004522670832235487, 0.033074710315490294, -0.010756465372075589, -0.014733518514768836, 0.0007429219722100636, -0.024551606428591558, -0.017850806518553666, 0.006329537201072435, -0.014528703476617045, 0.0188849492341552, -0.019568851874288883, -0.043573088530429675, 0.01878463020899722, -0.027434010956915323, 0.022807089553781093, 0.011774084526925976, -0.002057102253313082, 0.014896673783740311, -0.006312438117188679, 0.018198293870980053, -0.02420441898439707, -0.0042219882423061225, 0.023473293641171955, -0.005593394478255474, 0.04701013899589916, -0.0038974170373815647, 0.005647085625136267, 0.044718511173323955, 0.0023586225339653826], "topo_sd": [0.06596517017448146, 0.0687880178023695, 0.0641941537797493, 0.03883433069004205, 0.08119844551974946, 0.08630277942155064, 0.09570059311056717, 0.1209592950944171, 0.08156826405473566, 0.10704319962176255, 0.04111933555130811, 0.10057769107019714, 0.09415071876335505, 0.07177525334562107, 0.08063356464470765, 0.09708988000354125, 0.0734191226422137, 0.06598581261485431, 0.07058772636205624, 0.05815588911153743, 0.10488415452017014, 0.09454095508353619, 0.0795639911043837, 0.11360939837587691, 0.11180659458422162, 0.08783600728953701, 0.07195146268925086, 0.08351736264566337, 0.09220566714834291, 0.09398013370021613, 0.0631571735018903], "expr_mean": [0.88125, 0.89375, 0.9, 0.925, 0.88125, 0.86875, 0.91875, 0.9375, 0.85625, 0.875, 0.88125, 0.89375, 0.8875, 0.88125, 0.91875, 0.90625, 0.925, 0.9125, 0.89375, 0.89375, 0.9, 0.91875, 0.9125, 0.9125, 0.8625, 0.91875, 0.8875, 0.9125, 0.8875, 0.8875, 0.925]}, "generalizer": {"topo_mean": [0.012887554458538347, 0.635197177115899, 0.6078911219693592, 0.6357616699628147, 0.6439289306143333, 0.654466160189363, 0.6289376388706239, 0.6157095923145557, 0.6256911298195986, 0.6150229638944509, 0.6252025798152128, 0.6183155996130203, 0.605384450827658, 0.6028722348997615, 0.6294673594027417, 0.6589684554890709, 0.6671046348375, 0.6243616658917897, 0.6499392451480853, 0.6575826112068974, 0.6643421806349472, 0.6978816378903666, 0.682930067797744, 0.7134191029092556, 0.667580168386517, 0.6558589009444523, 0.7164248848756292, 0.7123644028591226, 0.6807088935666529, 0.6550039319806361, 0.6988625973450856], "topo_sd": [0.06596517017448146, 0.11181609432882926, 0.08682325484840688, 0.09880985684339862, 0.11621869855804609, 0.12244379571472348, 0.12718411774474703, 0.13903132851451028, 0.1368839625135575, 0.11093676360708923, 0.11160853220744953, 0.10772463204080478, 0.1216940565342419, 0.14934358904687675, 0.15765642218846704, 0.14383913519286085, 0.13386512171782142, 0.10314070448591721, 0.14589768753796264, 0.149809759929591, 0.12141997181865082, 0.12737814688331675, 0.1504398828755273, 0.1618251748107845, 0.13614574387397613, 0.13667990620485498, 0.13328985511037855, 0.1402472925620857, 0.17402363153102948, 0.17223732794330057, 0.16484183300966895], "expr_mean": [0.88125, 0.61875, 0.6125, 0.63125, 0.575, 0.5875, 0.58125, 0.58125, 0.5875, 0.55625, 0.56875, 0.575, 0.5625, 0.58125, 0.6, 0.625, 0.6125, 0.6125, 0.625, 0.6625, 0.63125, 0.65, 0.65, 0.65625, 0.6375, 0.65, 0.69375, 0.70625, 0.6625, 0.65, 0.6]}, "communicator": {"topo_mean": [0.012887554458538347, 0.9673907049250048, 0.9716003380623921, 0.9608883792486237, 0.9832343339337217, 0.9883660041286703, 0.9781135566040311, 0.972920755763808, 0.9846049894151541, 0.9883660041286703, 0.9897366596101028, 0.9847400332323432, 0.959916104411046, 0.9781026637387731, 0.9548346719961138, 0.9883660041286703, 0.9832343339337217, 0.9715501002823757, 0.9831840961537054, 0.9883660041286703, 0.9715501002823757, 0.9846049894151541, 0.9832343339337217, 1.0, 0.9883660041286703, 0.9832343339337217, 0.9796083630373944, 0.9832343339337217, 0.9847400332323432, 0.9781026637387731, 0.9832343339337217], "topo_sd": [0.06596517017448146, 0.06675875644730753, 0.04651662918149941, 0.07127788590666433, 0.0365479333286088, 0.03490198761398888, 0.03739825677978928, 0.05119708520091185, 0.023516267109900808, 0.03490198761398888, 0.02052668077979445, 0.032500734127009934, 0.06267395579325129, 0.03742574039078434, 0.05047048369214728, 0.03490198761398888, 0.0365479333286088, 0.058067615992707586, 0.050447711538884034, 0.03490198761398888, 0.058067615992707586, 0.023516267109900808, 0.0365479333286088, 0.0, 0.03490198761398888, 0.0365479333286088, 0.03371477178370219, 0.0365479333286088, 0.032500734127009934, 0.03742574039078434, 0.0365479333286088], "expr_mean": [0.88125, 0.9875, 0.9875, 0.98125, 0.99375, 0.99375, 0.99375, 0.99375, 1.0, 0.99375, 1.0, 1.0, 0.98125, 0.99375, 0.98125, 0.99375, 0.99375, 0.9875, 0.99375, 0.99375, 0.9875, 1.0, 0.99375, 1.0, 0.99375, 0.99375, 1.0, 0.99375, 1.0, 0.99375, 0.99375]}, "final_language_seed7001": [["po", "re"], ["po", "po"], ["po", "fa"], ["po", "su"], ["no", "re"], ["no", "po"], ["no", "fa"], ["no", "su"], ["su", "re"], ["su", "po"], ["su", "fa"], ["su", "su"], ["mu", "re"], ["mu", "po"], ["mu", "fa"], ["mu", "su"]], "seeds": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "params": {"meanings": 16, "values": 4, "syllables": ["ka", "po", "mu", "ti", "re", "no", "su", "fa"], "generations": 30, "bottleneck": 8, "noise": 0.01}}, "checksum_hex": "4be15eab", "canon_len": 583};
+</script>
+
+<!-- ================= UI ================= -->
+<script>
+"use strict";
+(function(){
+const $ = id => document.getElementById(id);
+const SVGNS = "http://www.w3.org/2000/svg";
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function el(tag, attrs, parent){
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function txt(parent, x, y, s, fill, size, anchor, extra){
+  const t = el("text", Object.assign({x, y, fill, "font-size": size || 10,
+    "font-family": "IBM Plex Mono, monospace", "text-anchor": anchor || "start",
+    "letter-spacing": ".04em"}, extra || {}), parent);
+  t.textContent = s;
+  return t;
+}
+const C = {red:"#E8604F", blue:"#6C97E0", green:"#4FAE87", gray:"#8A97A0",
+           grid:"#243240", lite:"#E9EEEA", mut:"#93A2AC",
+           lred:"#C93A2B", lblue:"#2B5CAD", lgreen:"#33795B", lgrid:"#E1E7E2", lmut:"#5C6A75", link:"#10161A"};
+
+/* ============ FIG A0 — hero trace ============ */
+function drawTrace(A){
+  const host = $("traceChart"); host.innerHTML = "";
+  const W = 560, H = 300, L = 46, R = 44, T = 18, B = 34;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Line chart: distinct words in circulation rises then collapses to one at consensus; success rate climbs to 1."}, host);
+  const tr = A.trace;
+  const tmax = tr.tconv, wmax = Math.max(...tr.words) * 1.15;
+  const X = t => L + (t / tmax) * (W - L - R);
+  const Y1 = w => T + (1 - w / wmax) * (H - T - B);
+  const Y2 = s => T + (1 - s) * (H - T - B);
+  for (let i = 0; i <= 4; i++){
+    const y = T + i * (H - T - B) / 4;
+    el("line", {x1: L, y1: y, x2: W - R, y2: y, stroke: C.grid, "stroke-width": 1}, svg);
+  }
+  for (let i = 0; i <= 4; i++){
+    const t = Math.round(tmax * i / 4), x = X(t);
+    txt(svg, x, H - 12, String(t), C.mut, 9.5, "middle");
+  }
+  for (let i = 0; i <= 4; i++){
+    txt(svg, L - 8, Y1(wmax * i / 4) + 3, String(Math.round(wmax * i / 4)), C.red, 9.5, "end");
+    txt(svg, W - R + 8, Y2(i / 4) + 3, (i / 4).toFixed(2), C.blue, 9.5, "start");
+  }
+  txt(svg, L, 11, "WORDS IN CIRCULATION", C.red, 9);
+  txt(svg, W - R, 11, "SUCCESS RATE", C.blue, 9, "end");
+  txt(svg, (L + W - R) / 2, H - 1, "INTERACTIONS", C.mut, 9, "middle");
+  const xc = X(tr.tconv);
+  el("line", {x1: xc, y1: T, x2: xc, y2: H - B, stroke: C.green, "stroke-width": 1, "stroke-dasharray": "3 4"}, svg);
+  txt(svg, xc - 6, T + 12, "CONSENSUS t=" + tr.tconv, C.green, 9, "end");
+  let d1 = "", d2 = "";
+  for (let i = 0; i < tr.t.length; i++){
+    d1 += (i ? "L" : "M") + X(tr.t[i]).toFixed(1) + " " + Y1(tr.words[i]).toFixed(1);
+    d2 += (i ? "L" : "M") + X(tr.t[i]).toFixed(1) + " " + Y2(tr.succ[i]).toFixed(1);
+  }
+  d1 += "L" + xc.toFixed(1) + " " + Y1(1).toFixed(1);
+  d2 += "L" + xc.toFixed(1) + " " + Y2(1).toFixed(1);
+  const p2 = el("path", {d: d2, fill: "none", stroke: C.blue, "stroke-width": 1.8, "stroke-linejoin": "round"}, svg);
+  const p1 = el("path", {d: d1, fill: "none", stroke: C.red, "stroke-width": 2, "stroke-linejoin": "round"}, svg);
+  el("circle", {cx: xc, cy: Y1(1), r: 3.5, fill: C.red}, svg);
+  if (!reduceMotion){
+    for (const p of [p1, p2]){
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      p.style.transition = "stroke-dashoffset 2.6s ease";
+      requestAnimationFrame(() => requestAnimationFrame(() => { p.style.strokeDashoffset = "0"; }));
+    }
+  }
+}
+
+/* ============ FIG A1 — scaling log–log ============ */
+function drawScaling(A){
+  const host = $("scalingChart"); host.innerHTML = "";
+  const W = 560, H = 330, L = 56, R = 20, T = 16, B = 40;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Log-log scatter of convergence time versus population size with fitted slope 1.40 and published slope 1.5 reference."}, host);
+  const lx = Math.log10, x0 = lx(8), x1 = lx(500), y0 = lx(30), y1 = lx(30000);
+  const X = v => L + (lx(v) - x0) / (x1 - x0) * (W - L - R);
+  const Y = v => T + (1 - (lx(v) - y0) / (y1 - y0)) * (H - T - B);
+  for (const g of [100, 1000, 10000]){
+    el("line", {x1: L, y1: Y(g), x2: W - R, y2: Y(g), stroke: C.grid}, svg);
+    txt(svg, L - 8, Y(g) + 3, g >= 1000 ? (g / 1000) + "k" : String(g), C.mut, 9.5, "end");
+  }
+  for (const N of A.Ns){
+    el("line", {x1: X(N), y1: T, x2: X(N), y2: H - B, stroke: C.grid, "stroke-dasharray": "2 5"}, svg);
+    txt(svg, X(N), H - 20, String(N), C.mut, 9.5, "middle");
+  }
+  txt(svg, (L + W - R) / 2, H - 4, "POPULATION N (log)", C.mut, 9, "middle");
+  txt(svg, 12, T + 8, "t (log)", C.mut, 9, "start", {transform: `rotate(-90 12 ${T + 8})`, "text-anchor": "end"});
+  /* published slope-1.5 reference through mean at N=50 */
+  const meanAt = N => A.tconv[N].reduce((a, b) => a + b, 0) / A.tconv[N].length;
+  const refC = Math.log(meanAt(50)) - 1.5 * Math.log(50);
+  const refY = N => Math.exp(refC + 1.5 * Math.log(N));
+  el("line", {x1: X(10), y1: Y(refY(10)), x2: X(400), y2: Y(refY(400)),
+    stroke: C.gray, "stroke-width": 1.2, "stroke-dasharray": "2 4", opacity: .8}, svg);
+  txt(svg, X(360), Y(refY(360)) - 8, "slope 1.5 (published)", C.gray, 9, "end");
+  /* fitted line */
+  const fitY = N => Math.exp(A.intercept + A.slope * Math.log(N));
+  el("line", {x1: X(10), y1: Y(fitY(10)), x2: X(400), y2: Y(fitY(400)),
+    stroke: C.lite, "stroke-width": 1.6, "stroke-dasharray": "6 4"}, svg);
+  txt(svg, X(13), Y(fitY(13)) - 10, "fit: t ∝ N^" + A.slope.toFixed(2) + "  R²=" + A.r2.toFixed(3), C.lite, 9.5);
+  /* points */
+  for (const N of A.Ns){
+    for (const v of A.tconv[N])
+      el("circle", {cx: X(N), cy: Y(v), r: 3.2, fill: C.red, opacity: .55}, svg);
+    el("circle", {cx: X(N), cy: Y(meanAt(N)), r: 4.4, fill: "none", stroke: C.lite, "stroke-width": 1.4}, svg);
+  }
+}
+
+/* ============ FIG B1 — topo similarity ============ */
+function drawTopo(B){
+  const host = $("topoChart"); host.innerHTML = "";
+  const W = 560, H = 330, L = 46, R = 16, T = 16, Bm = 38;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Structure across generations: both-pressures rises to near 1, learnability-only to 0.7, rote stays at 0."}, host);
+  const X = g => L + g / GENS_UI * (W - L - R);
+  const Y = v => T + (1 - (v + 0.25) / 1.3) * (H - T - Bm);
+  for (const v of [0, 0.25, 0.5, 0.75, 1]){
+    el("line", {x1: L, y1: Y(v), x2: W - R, y2: Y(v), stroke: C.grid}, svg);
+    txt(svg, L - 8, Y(v) + 3, v.toFixed(2), C.mut, 9.5, "end");
+  }
+  for (const g of [0, 5, 10, 15, 20, 25, 30]){
+    txt(svg, X(g), H - 16, String(g), C.mut, 9.5, "middle");
+  }
+  txt(svg, (L + W - R) / 2, H - 2, "GENERATION", C.mut, 9, "middle");
+  txt(svg, L, 10, "TOPOGRAPHIC SIMILARITY ρ", C.mut, 9);
+  const series = [
+    {k: "communicator", col: C.red},
+    {k: "generalizer", col: C.blue},
+    {k: "rote", col: C.gray}
+  ];
+  for (const s of series){
+    const m = B[s.k].topo_mean, sd = B[s.k].topo_sd;
+    let band = "M";
+    for (let g = 0; g <= GENS_UI; g++) band += X(g).toFixed(1) + " " + Y(m[g] + sd[g]).toFixed(1) + (g < GENS_UI ? " L" : " ");
+    for (let g = GENS_UI; g >= 0; g--) band += "L" + X(g).toFixed(1) + " " + Y(m[g] - sd[g]).toFixed(1) + " ";
+    el("path", {d: band + "Z", fill: s.col, opacity: .13}, svg);
+    let d = "";
+    for (let g = 0; g <= GENS_UI; g++) d += (g ? "L" : "M") + X(g).toFixed(1) + " " + Y(m[g]).toFixed(1);
+    el("path", {d, fill: "none", stroke: s.col, "stroke-width": 2, "stroke-linejoin": "round"}, svg);
+    el("circle", {cx: X(GENS_UI), cy: Y(m[GENS_UI]), r: 3.4, fill: s.col}, svg);
+  }
+}
+
+/* ============ FIG B2 — expressivity ============ */
+function drawExpr(B){
+  const host = $("exprChart"); host.innerHTML = "";
+  const W = 560, H = 200, L = 46, R = 16, T = 14, Bm = 34;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Expressivity across generations: both-pressures near 1, rote around 0.9, learnability-only sinks toward 0.6."}, host);
+  const X = g => L + g / GENS_UI * (W - L - R);
+  const Y = v => T + (1 - (v - 0.4) / 0.65) * (H - T - Bm);
+  for (const v of [0.4, 0.6, 0.8, 1.0]){
+    el("line", {x1: L, y1: Y(v), x2: W - R, y2: Y(v), stroke: C.grid}, svg);
+    txt(svg, L - 8, Y(v) + 3, v.toFixed(1), C.mut, 9.5, "end");
+  }
+  for (const g of [0, 10, 20, 30]) txt(svg, X(g), H - 14, String(g), C.mut, 9.5, "middle");
+  txt(svg, L, 9, "DISTINCT SIGNALS ÷ 16", C.mut, 9);
+  for (const s of [["communicator", C.red], ["generalizer", C.blue], ["rote", C.gray]]){
+    const m = B[s[0]].expr_mean;
+    let d = "";
+    for (let g = 0; g <= GENS_UI; g++) d += (g ? "L" : "M") + X(g).toFixed(1) + " " + Y(m[g]).toFixed(1);
+    el("path", {d, fill: "none", stroke: s[1], "stroke-width": 2, "stroke-linejoin": "round"}, svg);
+  }
+}
+
+/* ============ lexicon grid ============ */
+const SHAPES = ["circle", "square", "triangle", "star"];
+const SHAPE_GLYPH = ["●", "■", "▲", "★"];
+const COLORS = ["red", "blue", "green", "yellow"];
+const COLOR_CLASS = ["c-red", "c-blue", "c-green", "c-yellow"];
+function drawLexicon(B, verified){
+  const tbl = $("lexTable"); tbl.innerHTML = "";
+  const fl = B.final_language_seed7001;
+  const thead = document.createElement("thead");
+  let hr = "<tr><th></th>";
+  for (let j = 0; j < 4; j++) hr += `<th>${COLORS[j].toUpperCase()}</th>`;
+  thead.innerHTML = hr + "</tr>";
+  tbl.appendChild(thead);
+  const tb = document.createElement("tbody");
+  for (let i = 0; i < 4; i++){
+    const tr = document.createElement("tr");
+    let row = `<td class="rowh">${SHAPE_GLYPH[i]} ${SHAPES[i].toUpperCase()}</td>`;
+    for (let j = 0; j < 4; j++){
+      const w = fl[i * 4 + j];
+      row += `<td class="${COLOR_CLASS[j]}"><span class="w"><span class="pre">${w[0]}</span><span class="suf">${w[1]}</span></span></td>`;
+    }
+    tr.innerHTML = row;
+    tb.appendChild(tr);
+  }
+  tbl.appendChild(tb);
+  $("lexVerify").textContent = verified ? "recomputed in your browser ✓" : "reference";
+}
+
+/* ============ reproduce ============ */
+const GENS_UI = 30;
+let running = false;
+function reproduce(triggerBtns){
+  if (running) return;
+  running = true;
+  const btns = triggerBtns.map(id => $(id)).filter(Boolean);
+  btns.forEach(b => { b.disabled = true; });
+  const setStatus = (html, bad) => {
+    $("conStatus").innerHTML = html;
+    $("reproStatus").innerHTML = html + (bad ? "" : "");
+  };
+  setStatus("running 60 seeded simulations…");
+  setTimeout(() => {
+    const t0 = performance.now();
+    let fresh, err = null;
+    try { fresh = runAllScience(); } catch (e){ err = e; }
+    const ms = Math.round(performance.now() - t0);
+    if (err){
+      setStatus(`<span class="bad">error: ${String(err).slice(0, 80)}</span>`, true);
+    } else {
+      const match = fresh.checksumHex === REF.checksum_hex;
+      const lexMatch = JSON.stringify(fresh.B.final_language_seed7001) === JSON.stringify(REF.B.final_language_seed7001);
+      if (match){
+        setStatus(`<b>REPRODUCED ✓</b> 0x${fresh.checksumHex} — bit-identical to reference · ${ms} ms` +
+                  (lexMatch ? " · lexicon identical ✓" : ""));
+        drawTrace(fresh.A); drawScaling(fresh.A); drawTopo(fresh.B); drawExpr(fresh.B);
+        drawLexicon(fresh.B, true);
+        ["cardScaling", "cardTopo", "cardExpr"].forEach(id => $(id).classList.add("verified"));
+      } else {
+        setStatus(`<span class="bad">MISMATCH — got 0x${fresh.checksumHex}, expected 0x${REF.checksum_hex}. Please report this browser.</span>`, true);
+      }
+    }
+    btns.forEach(b => { b.disabled = false; });
+    running = false;
+  }, 60);
+}
+["heroRun", "conRun", "reproRun"].forEach(id => {
+  const b = $(id);
+  if (b) b.addEventListener("click", () => {
+    if (id === "heroRun") $("exp001").scrollIntoView({behavior: reduceMotion ? "auto" : "smooth"});
+    reproduce(["heroRun", "conRun", "reproRun"]);
+  });
+});
+
+/* ============ STUDY C — live probe ============ */
+const TEST_MEANINGS = [2, 7, 8, 13];       /* green circle, yellow square, red triangle, blue star */
+const KS = [2, 4, 8, 12];
+function probeMaterials(){
+  const fl = REF.B.final_language_seed7001;
+  const word = m => fl[m][0] + fl[m][1];
+  const meaningName = m => COLORS[m % 4] + " " + SHAPES[Math.floor(m / 4)];
+  const pool = [];
+  for (let m = 0; m < 16; m++) if (!TEST_MEANINGS.includes(m)) pool.push(m);
+  /* seeded order of training examples — same for everyone */
+  const rnd = mulberry32(99);
+  for (let i = pool.length - 1; i > 0; i--){
+    const j = randint(rnd, i + 1);
+    const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+  }
+  return {word, meaningName, pool};
+}
+let probeResults = [];
+function drawProbe(){
+  const host = $("probeChart"); host.innerHTML = "";
+  const W = 520, H = 260, L = 44, R = 16, T = 18, B = 40;
+  const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, role: "img",
+    "aria-label": "Live probe accuracy versus number of in-context examples."}, host);
+  const X = k => L + (k - 2) / 10 * (W - L - R);
+  const Y = v => T + (1 - v) * (H - T - B);
+  for (const v of [0, 0.25, 0.5, 0.75, 1]){
+    el("line", {x1: L, y1: Y(v), x2: W - R, y2: Y(v), stroke: C.lgrid}, svg);
+    txt(svg, L - 8, Y(v) + 3, (v * 100).toFixed(0) + "%", C.lmut, 9.5, "end");
+  }
+  for (const k of KS){
+    txt(svg, X(k), H - 20, "K=" + k, C.lmut, 9.5, "middle");
+  }
+  txt(svg, (L + W - R) / 2, H - 4, "IN-CONTEXT EXAMPLES", C.lmut, 9, "middle");
+  el("line", {x1: L, y1: Y(1 / 64), x2: W - R, y2: Y(1 / 64), stroke: C.lmut, "stroke-dasharray": "2 4", opacity: .6}, svg);
+  txt(svg, W - R, Y(1 / 64) - 5, "chance ≈ 1.6%", C.lmut, 8.5, "end");
+  const done = probeResults.filter(r => r);
+  for (const [key, col] of [["exact", C.lred], ["morph", C.lblue]]){
+    let d = "", started = false;
+    for (const r of done){
+      d += (started ? "L" : "M") + X(r.K).toFixed(1) + " " + Y(r[key]).toFixed(1);
+      started = true;
+    }
+    if (started) el("path", {d, fill: "none", stroke: col, "stroke-width": 2}, svg);
+    for (const r of done){
+      el("circle", {cx: X(r.K), cy: Y(r[key]), r: 4, fill: col}, svg);
+      txt(svg, X(r.K), Y(r[key]) - 9, (r[key] * 100).toFixed(0) + "%", col, 9, "middle");
+    }
+  }
+  txt(svg, L, 10, "■ EXACT WORD", C.lred, 9);
+  txt(svg, L + 110, 10, "■ PER-MORPHEME", C.lblue, 9);
+}
+function addTranscript(K, meaning, got, gold){
+  const t = $("transcript");
+  const empty = t.querySelector(".tr-empty");
+  if (empty) empty.remove();
+  const preOk = got.slice(0, 2) === gold.slice(0, 2);
+  const sufOk = got.slice(-2) === gold.slice(-2) && got.length >= 4;
+  const d = document.createElement("div");
+  d.className = "tr-item";
+  d.innerHTML = `<div class="tm"><span>K=${K} · “${meaning}”</span><span>${preOk && sufOk && got === gold ? '<span class="ok">EXACT ✓</span>' : ''}</span></div>
+    <div class="tw">model: <b>${got || "—"}</b> <span class="gold">· gold: ${gold}</span>
+    &nbsp; prefix <span class="${preOk ? "ok" : "no"}">${preOk ? "✓" : "✗"}</span>
+    &nbsp; suffix <span class="${sufOk ? "ok" : "no"}">${sufOk ? "✓" : "✗"}</span></div>`;
+  t.prepend(d);
+}
+async function callModel(prompt){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({model: "claude-sonnet-4-6", max_tokens: 1000,
+      messages: [{role: "user", content: prompt}]})
+  });
+  if (!res.ok) throw new Error("API " + res.status);
+  const data = await res.json();
+  return (data.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+}
+async function runProbe(){
+  const btn = $("probeRun"), status = $("probeStatus");
+  btn.disabled = true;
+  probeResults = [];
+  drawProbe();
+  const {word, meaningName, pool} = probeMaterials();
+  try {
+    for (const K of KS){
+      status.textContent = `eliciting · K=${K}…`;
+      const train = pool.slice(0, K).map(m => `“${word(m)}” = ${meaningName(m)}`).join("\n");
+      const tests = TEST_MEANINGS.map(meaningName);
+      const prompt =
+`You are a documentary field linguist. Below are all attested word–meaning pairs from a previously undocumented language (it evolved in a simulation; it appears in no corpus).
+
+${train}
+
+Infer the morphology and produce the words for these held-out meanings, in order:
+1. ${tests[0]}
+2. ${tests[1]}
+3. ${tests[2]}
+4. ${tests[3]}
+
+Reply with ONLY a JSON array of four lowercase strings. No other text.`;
+      const raw = await callModel(prompt);
+      let arr;
+      try { arr = JSON.parse(raw.replace(/```json|```/g, "").trim()); }
+      catch (e){ arr = ["", "", "", ""]; }
+      let exact = 0, morph = 0;
+      TEST_MEANINGS.forEach((m, i) => {
+        const gold = word(m);
+        const got = String(arr[i] || "").toLowerCase().trim();
+        if (got === gold) exact++;
+        if (got.slice(0, 2) === gold.slice(0, 2)) morph += 0.5;
+        if (got.length >= 4 && got.slice(-2) === gold.slice(-2)) morph += 0.5;
+        addTranscript(K, meaningName(m), got, gold);
+      });
+      probeResults.push({K, exact: exact / 4, morph: morph / 4});
+      drawProbe();
+    }
+    status.innerHTML = `<b>complete ✓</b> — graded against the seed-7001 gold forms`;
+  } catch (e){
+    status.innerHTML = `<span class="bad">live call unavailable here (${String(e).slice(0, 40)}). Host with an API proxy — see note below.</span>`;
+  }
+  btn.disabled = false;
+}
+$("probeRun").addEventListener("click", runProbe);
+
+/* ============ boot ============ */
+drawTrace(REF.A);
+drawScaling(REF.A);
+drawTopo(REF.B);
+drawExpr(REF.B);
+drawLexicon(REF.B, false);
+drawProbe();
+
+/* reveal on scroll */
+const els = document.querySelectorAll(".reveal");
+if (!("IntersectionObserver" in window)){ els.forEach(e => e.classList.add("on")); }
+else {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting){ en.target.classList.add("on"); io.unobserve(en.target); } });
+  }, {threshold: .1});
+  els.forEach(e => io.observe(e));
+}
+})();
+</script>
 </body>
 </html>
